@@ -137,7 +137,7 @@ def main():
     label_str = processor.decode(labels, skip_special_tokens=True)
     print(label_str)
 
-    model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-large-handwritten")
+    model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-large-printed")
 
     # set special tokens used for creating the decoder_input_ids from the labels
     model.config.decoder_start_token_id = processor.tokenizer.cls_token_id
