@@ -1,6 +1,5 @@
 from datetime import datetime
 import os
-from pickletools import optimize
 import sys
 import pandas as pd
 import torch
@@ -25,7 +24,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 
 cer_metric = load_metric("cer")
 wer_metric = load_metric('wer')
-processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+processor = TrOCRProcessor.from_pretrained("ycchen/TrOCR-base-ver021-v1")
 
 train_text = config['text_path']
 train_img = config['images_path']
@@ -122,7 +121,6 @@ def create_datasets(df: pd.DataFrame):
 
     return train_dataset, eval_dataset
 
-
 def main():
     df = load_laia()
     # df = load_dataset()
@@ -142,7 +140,7 @@ def main():
     print(label_str)
 
     print('step1') 
-    model = VisionEncoderDecoderModel.from_pretrained("andrek/HuMu_TrOCR") #,"microsoft/trocr-large-handwritten"
+    model = VisionEncoderDecoderModel.from_pretrained("ycchen/TrOCR-base-ver021-v1") #,"microsoft/trocr-large-handwritten"
     # set special tokens used for creating the decoder_input_ids from the labels
     model.config.decoder_start_token_id = processor.tokenizer.cls_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
@@ -151,41 +149,29 @@ def main():
 
     # set beam search parameters
     model.config.eos_token_id = processor.tokenizer.sep_token_id
-    model.config.max_length = 128
+    model.config.max_length = 64
     model.config.early_stopping = True
     model.config.no_repeat_ngram_size = 3
     model.config.length_penalty = 2.0
     model.config.num_beams = 4
-    # -----------------------
-    # model.config.activation_dropout = 0.1 # default = 0.0
-    # model.config.decoder_attention_heads = ?
-    # model.config.decoder_layers = 
-    # model.config.dropout = 0.3
     print(model.__dict__)
     # Saving Our Model
     # model.save_pretrained("./models/Which_Vision_Beast/Vit_CLM_HuTrOCR")
     training_args = Seq2SeqTrainingArguments(
-        num_train_epochs=25,
-        learning_rate=5e-05, #2e-5
-        adam_beta1 =0.9,
-        adam_beta2 = 0.999,
-        adam_epsilon = 1e-08,
+        num_train_epochs=12,
+        learning_rate=2e-5,
         predict_with_generate=True,
         evaluation_strategy="steps",
-        per_device_train_batch_size=8,
-        per_device_eval_batch_size=8,
-        # lr_scheduler_type= linear,
-        # mixed_precision_training= Native AMP,
-        seed= 42,
+        per_device_train_batch_size=24,
+        per_device_eval_batch_size=24,
         fp16=True,
         # Which_Vision_Beast/Vit_CLM_TrOCR
-        output_dir=f'models/andrek/HuMu_TrOCR{datetime.now().strftime("%Y%m%d%H%M%S")}',
+        output_dir=f'models/TrOCR-base-ver021-aicup-ft{datetime.now().strftime("%Y%m%d%H%M%S")}',
         logging_steps=100,
         save_steps=1000,
         eval_steps=500,
     )
 
-    print(training_args.__dict__)
     # instantiate trainer
     trainer = Seq2SeqTrainer(
         model=model,
@@ -196,11 +182,6 @@ def main():
         eval_dataset=eval_dataset,
         data_collator=default_data_collator,
     )
-    # trainer.lr_scheduler = 'linear' 
-    # trainer.optimizer = 'adam'
-    trainer.mixed_precision_training = 'Native AMP'
-    # print(trainer.mixed_precision_training)
-    
     trainer.train()
 
 
