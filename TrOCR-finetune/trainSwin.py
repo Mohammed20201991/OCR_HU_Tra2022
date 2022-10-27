@@ -8,9 +8,9 @@ from transformers import AutoFeatureExtractor
 
 fun.os.environ['CUDA_VISIBLE_DEVICES'] = '6'
 
-vision_model = fun.AutoModel.from_pretrained('facebook/deit-base-distilled-patch16-384') #microsoft/beit-base-patch16-384
+vision_model = fun.AutoModel.from_pretrained('google/vit-base-patch16-384') 
 
-# fun.processor.feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/deit-base-distilled-patch16-384")
+# fun.processor.feature_extractor = AutoFeatureExtractor.from_pretrained("google/vit-base-patch16-384")
  
  
 def main():
@@ -49,7 +49,7 @@ def main():
     print(model.encoder.__dict__)
     print(model.decoder.__dict__)
     # Saving Our Model
-    model.save_pretrained("./models/Which_Vision_Beast/Deit_CLM_HuTrOCR")
+    model.save_pretrained("./models/Which_Vision_Beast/Vit_CLM_HuTrOCR")
     training_args = fun.Seq2SeqTrainingArguments(
         num_train_epochs=12,
         learning_rate=2e-5,
@@ -58,7 +58,7 @@ def main():
         per_device_train_batch_size=12,
         per_device_eval_batch_size=12,
         fp16=True,
-        output_dir=f'models/Which_Vision_Beast/Deit_CLM_TrOCR{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
+        output_dir=f'models/Which_Vision_Beast/Vit_CLM_TrOCR{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
         logging_steps=100,
         save_steps=1000,
         eval_steps=500,
