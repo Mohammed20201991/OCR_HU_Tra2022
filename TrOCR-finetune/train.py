@@ -5,7 +5,7 @@ import unit_test
 
 fun.os.environ['CUDA_LAUNCH_BLOCKING'] = "4"
 
-fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained("bert-base-uncased")
+fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained("SZTAKI-HLT/hubert-base-cc")
 
 def main():
   
@@ -26,7 +26,7 @@ def main():
     label_str = fun.processor.decode(labels, skip_special_tokens=True)
     print(label_str)
     
-    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("google/vit-base-patch16-384","bert-base-uncased")
+    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("google/vit-base-patch16-384","SZTAKI-HLT/hubert-base-cc")
     # set decoder config to causal lm
     model.config.decoder.is_decoder = True
     model.config.decoder.add_cross_attention = True
@@ -44,24 +44,24 @@ def main():
     model.config.eos_token_id = fun.processor.tokenizer.sep_token_id
     model.config.max_length = 128
     model.config.early_stopping = True
-    model.config.no_repeat_ngram_size = 3
+    model.config.no_repeat_ngram_size = 4
     model.config.length_penalty = 2.0
     model.config.num_beams = 4
 
     # from transformers import Seq2SeqTrainer, Seq2SeqTrainingArguments
 
     training_args = fun.Seq2SeqTrainingArguments(
+        num_train_epochs=14,
+        learning_rate=2e-5,
         predict_with_generate=True,
         evaluation_strategy="steps",
-        learning_rate=2e-5,
-        num_train_epochs=12,
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
         fp16=True,
-        output_dir="./vit_bert",
+        output_dir="./models/vit_hubert",
         logging_steps=100,
         save_steps=1000,
-        eval_steps=500,
+        eval_steps=200,
     )
 
     # instantiate trainer
