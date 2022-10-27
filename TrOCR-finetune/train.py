@@ -5,7 +5,7 @@ import unit_test
 
 fun.os.environ['CUDA_LAUNCH_BLOCKING'] = "4"
 
-fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained("SzegedAI/charmen-electra")
+fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained("SzegedAI/hubert-medium-wiki-seq128")
 
 def main():
   
@@ -26,7 +26,7 @@ def main():
     label_str = fun.processor.decode(labels, skip_special_tokens=True)
     print(label_str)
     
-    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("google/vit-base-patch16-384","SzegedAI/charmen-electra", trust_remote_code=True)
+    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("google/vit-base-patch16-384","SzegedAI/hubert-medium-wiki-seq128")
     # set decoder config to causal lm
     model.config.decoder.is_decoder = True
     model.config.decoder.add_cross_attention = True
@@ -58,7 +58,7 @@ def main():
         per_device_train_batch_size=24,
         per_device_eval_batch_size=24,
         fp16=True,
-        output_dir="./vit_electraHu",
+        output_dir="./vit_SZHUbert",
         logging_steps=100,
         save_steps=1000,
         eval_steps=500,
@@ -79,3 +79,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
