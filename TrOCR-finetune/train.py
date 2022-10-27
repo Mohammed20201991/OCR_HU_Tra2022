@@ -1,11 +1,9 @@
 import fun
 import unit_test
 fun.os.environ['CUDA_VISIBLE_DEVICES'] = '4'
-from transformers import BartTokenizer , AutoFeatureExtractor
 
-Bartmodel = fun.AutoModel.from_pretrained("facebook/bart-base")
-fun.processor.tokenizer = BartTokenizer.from_pretrained("facebook/bart-large")
-fun.processor.feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/swin-base-patch4-window12-384")
+# from transformers import AutoTokenizer
+fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained("SZTAKI-HLT/hubert-base-cc")
 
 def main():
     df = fun.load_laia()
@@ -17,6 +15,7 @@ def main():
     print("Number of validation examples:", len(eval_dataset))
 
     
+    # processor.tokenizer.pad_token = processor.tokenizer.eos_token
     encoding = train_dataset[0]
     for k, v in encoding.items():
         print(k, v.shape)
@@ -26,40 +25,34 @@ def main():
     label_str = fun.processor.decode(labels, skip_special_tokens=True)
     print(label_str)
 
-    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained(
-    "microsoft/swin-base-patch4-window12-384", "facebook/bart-large" )
-    
-    model.config.is_decoder = True
-    model.config.add_cross_attention = True
+    # print('step1')
+    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("microsoft/swin-large-patch4-window12-384-in22k", "SZTAKI-HLT/hubert-base-cc")
 
-    
     # set special tokens used for creating the decoder_input_ids from the labels
-    # assert model.config.decoder_start_token_id == fun.processor.tokenizer.cls_token_id
     model.config.decoder_start_token_id = fun.processor.tokenizer.cls_token_id
     assert model.config.decoder_start_token_id == fun.processor.tokenizer.cls_token_id
-
     model.config.pad_token_id = fun.processor.tokenizer.pad_token_id
     # make sure vocab size is set correctly
-    # model.config.vocab_size = model.config.decoder.vocab_size
-
+    model.config.vocab_size = model.config.decoder.vocab_size
+    model.config.dropout = 0.2
     # set beam search parameters
     model.config.eos_token_id = fun.processor.tokenizer.sep_token_id
-    model.config.max_length = 64
+    model.config.max_length = 128
     model.config.early_stopping = True
     model.config.no_repeat_ngram_size = 3
     model.config.length_penalty = 2.0
     model.config.num_beams = 4
-    
+
     training_args = fun.Seq2SeqTrainingArguments(
         dataloader_num_workers=0,
         num_train_epochs=12,
         learning_rate=2e-5,
         predict_with_generate=True,
         evaluation_strategy="steps",
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
+        per_device_train_batch_size = 16,
+        per_device_eval_batch_size = 16,
         fp16=False,
-        output_dir=f'models/Swin_Bart/{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
+        output_dir=f'models/Swin_HuBert/{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
         logging_steps=100,
         save_steps=1000,
         eval_steps=500,
