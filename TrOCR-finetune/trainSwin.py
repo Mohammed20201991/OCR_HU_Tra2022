@@ -10,7 +10,7 @@ fun.os.environ['CUDA_VISIBLE_DEVICES'] = '6'
 
 vision_model = fun.AutoModel.from_pretrained('facebook/deit-base-distilled-patch16-384') #microsoft/beit-base-patch16-384
 
-# fun.processor.feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/swin-base-patch4-window12-384")
+# fun.processor.feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/deit-base-distilled-patch16-384")
  
  
 def main():
