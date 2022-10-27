@@ -1,11 +1,14 @@
 import sys
 sys.path.append('/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/')
 import fun
-import unit_test                          
+import unit_test
+from transformers import AutoFeatureExtractor
+
+                           
 
 fun.os.environ['CUDA_VISIBLE_DEVICES'] = '6'
 
-vision_model = fun.AutoModel.from_pretrained('microsoft/swin-large-patch4-window12-384-in22k') #microsoft/beit-base-patch16-384
+vision_model = fun.AutoModel.from_pretrained('facebook/deit-base-distilled-patch16-384') #microsoft/beit-base-patch16-384
 
 # fun.processor.feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/swin-base-patch4-window12-384")
  
@@ -38,15 +41,15 @@ def main():
 
     # set beam search parameters
     model.config.eos_token_id = fun.processor.tokenizer.sep_token_id
-    model.config.max_length = 64
+    model.config.max_length = 128
     model.config.early_stopping = True
     model.config.no_repeat_ngram_size = 3
     model.config.length_penalty = 2.0
     model.config.num_beams = 4
-    # print(model.encoder.__dict__)
-    # print(model.decoder.__dict__)
+    print(model.encoder.__dict__)
+    print(model.decoder.__dict__)
     # Saving Our Model
-    # model.save_pretrained("./models/Which_Vision_Beast/Swin_CLM_HuTrOCR")
+    model.save_pretrained("./models/Which_Vision_Beast/Deit_CLM_HuTrOCR")
     training_args = fun.Seq2SeqTrainingArguments(
         num_train_epochs=12,
         learning_rate=2e-5,
@@ -55,7 +58,7 @@ def main():
         per_device_train_batch_size=12,
         per_device_eval_batch_size=12,
         fp16=True,
-        output_dir=f'models/Which_Vision_Beast/Swin_CLM_TrOCR{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
+        output_dir=f'models/Which_Vision_Beast/Deit_CLM_TrOCR{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
         logging_steps=100,
         save_steps=1000,
         eval_steps=500,
@@ -72,7 +75,6 @@ def main():
         data_collator= fun.default_data_collator,
     )
     trainer.train()
-
 
 if __name__ == '__main__':
     main()
