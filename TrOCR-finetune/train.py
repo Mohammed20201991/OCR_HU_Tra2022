@@ -23,7 +23,7 @@ def main():
     label_str = fun.processor.decode(labels, skip_special_tokens=True)
     print(label_str)
 
-    # print('step1')
+    # Beit + huBert
     model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained(
             "microsoft/beit-base-patch16-384", "SZTAKI-HLT/hubert-base-cc")
 
