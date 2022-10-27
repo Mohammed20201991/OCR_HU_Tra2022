@@ -1,15 +1,10 @@
+from platform import processor
 import fun
 import unit_test
-fun.os.environ['CUDA_VISIBLE_DEVICES'] = '5'
-
-processor = fun.TrOCRProcessor.from_pretrained("microsoft/trocr-base-printed")   #microsoft/trocr-base-handwritten
-# from byte_offset_tokenizer import ByteOffsetTokenizer
+fun.os.environ['CUDA_VISIBLE_DEVICES'] = '6'
 # from transformers import AutoTokenizer
-processor.tokenizer = fun.AutoTokenizer.from_pretrained("distilbert-base-cased")
-# model = AutoModel.from_pretrained("SzegedAI/charmen-electra", trust_remote_code=True)
-
-
-
+fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained("gpt2")
+print(fun.processor.tokenizer)
 def main():
     df = fun.load_laia()
     # df = load_dataset()
@@ -19,8 +14,7 @@ def main():
     print("Number of training examples:", len(train_dataset))
     print("Number of validation examples:", len(eval_dataset))
 
-    
-    # processor.tokenizer.pad_token = processor.tokenizer.eos_token
+    fun.processor.tokenizer.pad_token = fun.processor.tokenizer.eos_token
     encoding = train_dataset[0]
     for k, v in encoding.items():
         print(k, v.shape)
@@ -29,18 +23,16 @@ def main():
     labels[labels == -100] = fun.processor.tokenizer.pad_token_id
     label_str = fun.processor.decode(labels, skip_special_tokens=True)
     print(label_str)
-
-    # print('step1')
-    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("google/vit-base-patch16-384", "facebook/nllb-200-distilled-600M")
+    model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained("google/vit-base-patch16-384", "gpt2")
 
     # set special tokens used for creating the decoder_input_ids from the labels
-    model.config.decoder_start_token_id = fun.processor.tokenizer.cls_token_id
+    model.config.decoder_start_token_id = fun.processor.tokenizer.bos_token_id  # ? processor.tokenizer.cls_token_id
     model.config.pad_token_id = fun.processor.tokenizer.pad_token_id
     # make sure vocab size is set correctly
     model.config.vocab_size = model.config.decoder.vocab_size
 
     # set beam search parameters
-    model.config.eos_token_id = fun.processor.tokenizer.sep_token_id
+    model.config.eos_token_id = fun.processor.tokenizer.eos_token_id #sep_token_id
     model.config.max_length = 64
     model.config.early_stopping = True
     model.config.no_repeat_ngram_size = 3
@@ -57,10 +49,10 @@ def main():
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
         fp16=False,
-        output_dir=f'models/ViT_distilled2/{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
+        output_dir=f'models/ViT_gpt2/{fun.datetime.now().strftime("%Y%m%d%H%M%S")}',
         logging_steps=100,
         save_steps=1000,
-        eval_steps=200,
+        eval_steps=500,
     )
 
     # instantiate trainer
@@ -74,7 +66,6 @@ def main():
         data_collator=fun.default_data_collator,
     )
     trainer.train()
-
 
 if __name__ == '__main__':
     main()
