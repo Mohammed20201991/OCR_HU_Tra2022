@@ -1,33 +1,6 @@
-import sys
-sys.path.append('/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/')
 import fun
-import unit_test
-
-fun.os.environ['CUDA_LAUNCH_BLOCKING'] = "4"
-
-# modify  the tokenizer 
+# modifying  the tokenizer 
 fun.processor.tokenizer = fun.AutoTokenizer.from_pretrained(fun.Decoder)
-
-def trocr_model_config(model):
-    # set decoder config to causal lm
-    model.config.decoder.is_decoder = True
-    model.config.decoder.add_cross_attention = True
-
-    # set special tokens used for creating the decoder_input_ids from the labels
-    model.config.decoder_start_token_id = fun.processor.tokenizer.cls_token_id
-    assert model.config.decoder_start_token_id == fun.processor.tokenizer.cls_token_id
-    model.config.pad_token_id = fun.processor.tokenizer.pad_token_id
-    # make sure vocab size is set correctly
-    model.config.vocab_size = model.config.decoder.vocab_size
-
-    # set beam search parameters
-    model.config.eos_token_id = fun.processor.tokenizer.sep_token_id
-    model.config.max_length = 128
-    model.config.early_stopping = True
-    model.config.no_repeat_ngram_size = 3
-    model.config.length_penalty = 2.0
-    model.config.num_beams = 4
-    return model 
 
 def main():
     df = fun.load_laia()
@@ -49,9 +22,7 @@ def main():
     
     model = fun.VisionEncoderDecoderModel.from_encoder_decoder_pretrained(fun.Encoder,fun.Decoder)
     # setting model configuration
-    trocr_model_config(model)
-
-    # from transformers import Seq2SeqTrainer, Seq2SeqTrainingArguments
+    configured_model = fun.trocr_model_config(model)
 
     training_args = fun.Seq2SeqTrainingArguments(
         predict_with_generate=True,
@@ -69,7 +40,7 @@ def main():
 
     # instantiate trainer
     trainer = fun.Seq2SeqTrainer(
-        model=model,
+        model=configured_model,
         tokenizer= fun.processor.feature_extractor,
         args=training_args,
         compute_metrics= fun.compute_metrics,

@@ -1,12 +1,12 @@
+import sys
+sys.path.append('/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/')
+import unit_test
 from datetime import datetime
 import os
-# from mohammad.asdf.TrOCR-finetune.vit_bert import Encoder
 os.environ['CUDA_VISIBLE_DEVICES'] =  '6' # which_gpu_wanna_work_with    
-
-# import sys
 import pandas as pd
 import torch
-# print(torch.__version__)
+import argparse
 from PIL import Image
 from datasets import load_metric
 from sklearn.model_selection import train_test_split
@@ -18,7 +18,7 @@ from transformers import (Seq2SeqTrainer,
                           VisionEncoderDecoderModel ,
                           AutoModel,
                           default_data_collator)
-import argparse
+
 
 torch.cuda.is_available()
 parser = argparse.ArgumentParser(description="Example script for finetuning TrOCR model",
@@ -130,3 +130,25 @@ def create_datasets(df: pd.DataFrame):
                                 df=test_df,
                                 processor=processor)
     return train_dataset, eval_dataset
+
+
+def trocr_model_config(model):
+    # set decoder config to causal lm
+    model.config.decoder.is_decoder = True
+    model.config.decoder.add_cross_attention = True
+
+    # set special tokens used for creating the decoder_input_ids from the labels
+    model.config.decoder_start_token_id = processor.tokenizer.cls_token_id
+    assert model.config.decoder_start_token_id == processor.tokenizer.cls_token_id
+    model.config.pad_token_id = processor.tokenizer.pad_token_id
+    # make sure vocab size is set correctly
+    model.config.vocab_size = model.config.decoder.vocab_size
+
+    # set beam search parameters
+    model.config.eos_token_id = processor.tokenizer.sep_token_id
+    model.config.max_length = 128
+    model.config.early_stopping = True
+    model.config.no_repeat_ngram_size = 3
+    model.config.length_penalty = 2.0
+    model.config.num_beams = 4
+    return model
