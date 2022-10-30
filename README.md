@@ -197,4 +197,5 @@ the status whether is it ok or not, and many other meta parameters(they are not 
 <img src="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/RALK987_1865_817_121_001-031.jpg" alt="alt" border-radius: 8px>
  <h4 style="font-size:50px;"> And the corresponding text:tott űlése határozata folytán</h4> 
 
-
+## An Inference Example
+Please see detials in [Inference_with_TrOCR_+_Gradio_demo.ipynb](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/Inference_with_TrOCR_%2B_Gradio_demo.ipynb).
