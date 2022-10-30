@@ -1,4 +1,4 @@
-# OCR_HU_Tra2022
+# TrOCR_HU_2022
 ############# **TrOCR Finetuning** #############
 
 Description:
