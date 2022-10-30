@@ -199,3 +199,12 @@ the status whether is it ok or not, and many other meta parameters(they are not 
 
 ## An Inference Example
 Please see detials in [Inference_with_TrOCR_+_Gradio_demo.ipynb](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/Inference_with_TrOCR_%2B_Gradio_demo.ipynb).
+
+## Fine-tuning  
+Fine-tuning TrOCR on HuDataset
+[Fine_tune_TrOCR_Handwriting_using_Seq2SeqTrainer](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/Fine_tune_TrOCR_Handwriting_using_Seq2SeqTrainer.ipynb)
+
+## Evaluation
+Evaluation can be found on this jupyternotebook [Evaluating_TrOCR_base_handwritten_on_the_huData_test_set](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/Evaluating_TrOCR_base_handwritten_on_the_huData_test_set.ipynb)
+
+
