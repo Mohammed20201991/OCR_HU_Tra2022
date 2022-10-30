@@ -17,24 +17,32 @@ Content:
 
 1. unzip the image files
 
-$ cd training-data-ex
-$ unzip imgs.zip
+~~~bash  
+!cd training-data-ex
+!unzip imgs.zip
+~~~
 
 2. finetune pre-trained model
 (pass 4 arguments text, coressponding image ,encoder and decoder )
-& python3 train.py  training-data-ex/lines.txt training-data-ex/img/ google/vit-base-patch16-384 bert-base-uncased
-
+~~~bash
+python3 train.py  training-data-ex/lines.txt training-data-ex/img/ google/vit-base-patch16-384 bert-base-uncased
+~~~
 3. test the model
 
 The image files must be chunks of text pages presenting only one sentence
 
 Processing a single image:
 
-$ python3 script/test.py models/Arany200 test_examples/test.jpg
+~~~bash
+python3 script/test.py models/Arany200 test_examples/test.jpg
+~~~
 
 Dump processing & writing output to a text file:
 
-$ python3 script/test.py -d models/Arany200 test_examples -o output.txt
+~~~bash 
+python3 script/test.py -d models/Arany200 test_examples -o output.txt
+~~~
+
 <h3> illusturation on how TrOCR architecture look like  </h3>
 
 ![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/illustration%20for%20Hungarain%20Transformer.PNG)
@@ -175,11 +183,18 @@ $ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>mGPT</td>
   </tr>
  
- 
 </table>
 
 </body>
 </html>
 
+<hr>
+<h2> DataSets </h2>
+The baseline models are trained with a proprietary dataset. The dataset is private data that contains images (in jpg format) these images have been containing segmented by lines and annotated with corresponding text in the text file. The annotations contain the image name,
+the status whether is it ok or not, and many other meta parameters(they are not important in our task), and the last will contains the text for this image (features) separating each word by(|)characters, the (+) sign used to concatenate next line with current sentence. As Figure below .
+
+<p>sampling image:</p>
+<img src="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/RALK987_1865_817_121_001-031.jpg" alt="Paris" border-radius: 8px>
+And the corresponding text <h4 style="font-size:50px;">tott űlése határozata folytán</h4> 
 
 
