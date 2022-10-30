@@ -194,7 +194,7 @@ The baseline models are trained with a proprietary dataset. The dataset is priva
 the status whether is it ok or not, and many other meta parameters(they are not important in our task), and the last will contains the text for this image (features) separating each word by(|)characters, the (+) sign used to concatenate next line with current sentence. As Figure below .
 
 <p>sampling image:</p>
-<img src="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/RALK987_1865_817_121_001-031.jpg" alt="Paris" border-radius: 8px>
-And the corresponding text <h4 style="font-size:50px;">tott űlése határozata folytán</h4> 
+<img src="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/RALK987_1865_817_121_001-031.jpg" alt="alt" border-radius: 8px>
+ <h4 style="font-size:50px;"> And the corresponding text:tott űlése határozata folytán</h4> 
 
 
