@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] =  '5' # which_gpu_wanna_work_with    
+# from mohammad.asdf.TrOCR-finetune.vit_bert import Encoder
+os.environ['CUDA_VISIBLE_DEVICES'] =  '6' # which_gpu_wanna_work_with    
 
 # import sys
 import pandas as pd
@@ -10,29 +11,40 @@ from PIL import Image
 from datasets import load_metric
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
-from transformers import Seq2SeqTrainer, Seq2SeqTrainingArguments
-from transformers import TrOCRProcessor ,AutoTokenizer
-from transformers import VisionEncoderDecoderModel ,AutoModel
-from transformers import default_data_collator
-
-# import argparse
+from transformers import (Seq2SeqTrainer, 
+                          Seq2SeqTrainingArguments,
+                          TrOCRProcessor ,
+                          AutoTokenizer,
+                          VisionEncoderDecoderModel ,
+                          AutoModel,
+                          default_data_collator)
+import argparse
 
 torch.cuda.is_available()
-# parser = argparse.ArgumentParser(description="Example script for finetuning TrOCR model",
-#                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-# parser.add_argument("text_path", help="Location of transcriptions (single text file)")
-# parser.add_argument("images_path", help="Location of image files (folder)")
-# args = parser.parse_args()
-# config = vars(args)    
+parser = argparse.ArgumentParser(description="Example script for finetuning TrOCR model",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("text_path", help="Location of transcriptions (single text file)")
+parser.add_argument("images_path", help="Location of image files (folder)")
+
+parser.add_argument("encoder_type", type = str ,help="Which type of featuers Extraction)")
+parser.add_argument("decoder_type", help="Which type of Text Generation (huggingface model)")
+
+args = parser.parse_args()
+config = vars(args)    
 
 cer_metric = load_metric("cer")
 wer_metric = load_metric('wer')
 processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
-# train_text = config['text_path']
-# train_img = config['images_path']
+train_text = config['text_path']
+train_img = config['images_path']
 
-train_text = "/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/training-data-ex/lines.txt"
-train_img  = "/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/training-data-ex/img/"
+Encoder = config['encoder_type']
+Decoder = config['decoder_type']
+
+# Decoder = "bert-base-uncased"
+# Encoder = "google/vit-base-patch16-384"
+# train_text = "/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/training-data-ex/lines.txt"
+# train_img  = "/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/training-data-ex/img/"
 
 def compute_metrics(pred):
     labels_ids = pred.label_ids
@@ -70,9 +82,7 @@ class LaiaDataset(Dataset):
         # important: make sure that PAD tokens are ignored by the loss function
         labels = [label if label != self.processor.tokenizer.pad_token_id else -100 for label in
                   labels]
-
-        encoding = {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
-        return encoding
+        return {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
 
 
 def load_dataset():
@@ -84,8 +94,8 @@ def load_dataset():
 
 
 def load_laia() -> pd.DataFrame:
-
-    df = pd.read_csv('/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/training-data-ex/lines.txt',sep=' ', header=None)
+    # path = '/home/ngyongyossy/mohammad/asdf/TrOCR-finetune/training-data-ex/lines.txt'
+    df = pd.read_csv(train_text,sep=' ', header=None)
     data = []
     with open(train_text) as infile:
         for line in infile:
