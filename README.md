@@ -13,7 +13,7 @@ Content:
 - models/: contians list of a finetuned models on the example dataset (including Arany200 )
 - script/test: script for testing
 
-Usage:
+##How to use it?
 
 1. unzip the image files
 
