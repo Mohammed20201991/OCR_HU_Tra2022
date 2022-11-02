@@ -45,7 +45,7 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
 
 <h3> illusturation on how TrOCR architecture look like  </h3>
 
-![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/illustration%20for%20Hungarain%20Transformer.PNG)
+![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/illustration%20for%20%20%20Hungarain%20Transformer.PNG)
 
  <!DOCTYPE html>
 <html>
