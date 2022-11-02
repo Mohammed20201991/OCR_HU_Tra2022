@@ -151,8 +151,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <th>Model name</th>
     <th>Encoder Transformer</th>
     <th>Decoder Transformers</th>
-    <th>CER</th>
-    <th>WER</th>
+    <th>CER %</th>
+    <th>WER %</th>
   </tr>
   <tr>
     <td>1</>
@@ -176,8 +176,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>HuMu𝐿𝑎𝑟𝑔𝑒𝑆𝑡𝑎𝑔𝑒1 </td>
     <td>ViT</td>
     <td>CLM</td>
-    <td>7.115%</td>
-    <td>26.570%</td>
+    <td>7.115</td>
+    <td>26.570</td>
   </tr>
   <tr>
     <td>4</td>
@@ -192,48 +192,48 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>BeiT_CLM</td>
     <td>BeiT</td>
     <td>CLM</td>
-    <td>4.684%</td>
-    <td>20.676%</td>
+    <td>4.684</td>
+    <td>20.676</td>
   </tr>
   <tr>
     <td>6</td>
     <td>Swin_CLM</td>
     <td>Swin</td>
     <td>CLM</td>
-    <td>4.876%</td>
-    <td>21.64%</td>
+    <td>4.876</td>
+    <td>21.64</td>
   </tr>
   <tr>
     <td>7</td>
     <td>DeiT_CLM</td>
     <td>DeiT</td>
     <td>CLM</td>
-    <td>4.624%</td>
-    <td>20.869 %</td>
+    <td>4.624</td>
+    <td>20.869</td>
   </tr>
   <tr>
     <td>8</td>
     <td>SwinHuBert</td>
     <td>Swin</td>
     <td>HuBert</td>
-    <td>77.364 %</td>
-    <td>93.339%</td>
+    <td>77.364</td>
+    <td>93.339</td>
   </tr>
   <tr>
     <td>9</td>
     <td>SwinBart</td>
     <td>Swin</td>
     <td>Bart</td>
-    <td>136.22%</td>
-    <td>100.48% </td>
+    <td>136.22</td>
+    <td>100.48 </td>
   </tr>
   <tr>
     <td>10</td>
     <td>ViTHuBert</td>
     <td>ViT</td>
     <td>HuBert</td>
-    <td>77.977%</td>
-    <td>95.442 %</td>
+    <td>77.977</td>
+    <td>95.442</td>
   </tr>
  
  <tr>
@@ -241,32 +241,32 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>Vitdistilbert</td>
     <td>ViT</td>
     <td>Distilbert</td>
-    <td>80.437%</td>
-    <td>95.877 %</td>
+    <td>80.437</td>
+    <td>95.877</td>
   </tr>
  <tr>
     <td>12</td>
     <td>hubert-m-wiki-s128</td>
     <td></td>
     <td></td>
-    <td>80.691%</td>
-    <td>97.721 % </td>
+    <td>80.691</td>
+    <td>97.721</td>
   </tr>
  <tr>
     <td>13</td>
     <td>hubert-medium-wiki</td>
     <td>ViT</td>
     <td>Hubert</td>
-    <td>82.194%</td>
-    <td>99.561 %</td>
+    <td>82.194</td>
+    <td>99.561</td>
   </tr>
  <tr>
     <td>14</td>
     <td>BeitHuBert</td>
     <td>BeiT</td>
     <td>HuBert</td>
-    <td>98.146%</td>
-    <td>96.319 %</td>
+    <td>98.146</td>
+    <td>96.319</td>
   </tr>
  
  <tr>
@@ -274,8 +274,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>DeitHubert</td>
     <td>DeiT</td>
     <td>HuBert</td>
-    <td>80.95%</td>
-    <td>104 % </td>
+    <td>80.95</td>
+    <td>104</td>
   </tr>
  <tr>
     <td>16</td>
@@ -291,8 +291,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>ViTgpt2smallhu poem</td>
     <td>ViT</td>
     <td>gpt2 on hu poem</td>
-    <td>362%</td>
-    <td>281 %</td>
+    <td>362</td>
+    <td>281</td>
   </tr>
  
  <tr>
@@ -300,8 +300,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>ViTRoberta</td>
     <td>ViT</td>
     <td>XLRberta</td>
-    <td>198.75%</td>
-    <td>405.02 %</td>
+    <td>198.75</td>
+    <td>405.02</td>
   </tr>
  
  <tr>
@@ -309,8 +309,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>ViTmGPT</td>
     <td>ViT</td>
     <td>mGPT</td>
-    <td>163 %</td>
-    <td>787 %</td>
+    <td>163</td>
+    <td>787</td>
   </tr>
  
 </table>
