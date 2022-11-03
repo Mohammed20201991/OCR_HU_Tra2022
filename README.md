@@ -28,7 +28,7 @@ Example source code to finetune and test TrOCR models for handwritten text recog
 
 **<p id= "How to use it?"> How to use it?</p>**
 
-<h4> Step 0: unzip the image files </h4>
+<h4> Step 0: download  </h4>
 
 ~~~bash  
 !git clone https://github.com/Mohammed20201991/OCR_HU_Tra2022.git
