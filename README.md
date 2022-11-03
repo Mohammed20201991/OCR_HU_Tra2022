@@ -43,10 +43,12 @@ Example source code to finetune and test TrOCR models for handwritten text recog
 ~~~
 
 <h4> Step 2: finetune pre-trained model</h4>
+
 (pass 4 arguments text, coressponding image ,encoder and decoder )
 ~~~bash
 python3 train.py  training-data-ex/lines.txt training-data-ex/img/ google/vit-base-patch16-384 bert-base-uncased
 ~~~
+
 <h4> Step 3: test the model</h4>
 
 The image files must be chunks of text pages presenting only one sentence
