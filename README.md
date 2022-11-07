@@ -96,7 +96,7 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
   <tr>
     <td>DeiT</td>
     <td> <a href ="https://huggingface.co/facebook/deit-base-distilled-patch16-384">deit-base-distilled-patch16-384</a> </td>
-    <td> <a href="http://proceedings.mlr.press/v139/touvron21a/touvron21a.pdf">see paper</a> </td>
+    <td> <a href="http://proceedings.mlr.press/v139/touvron21a/touvron21a.pdf">touvron21a.pdf</a> </td>
   </tr>
   
   <tr>
@@ -110,11 +110,6 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td> <a href="https://arxiv.org/abs/2103.14030">https://arxiv.org/abs/2103.14030</a> </td>
   </tr>
   
-  <tr>
-    <td>ViT(not used yet)</td>
-    <td> <a href ="https://huggingface.co/openai/clip-vit-large-patch14">clip-vit-large-patch14</a> </td>
-    <td> <a href="https://github.com/openai/CLIP/blob/main/model-card.md">doc ..</a> </td>
-  </tr>
 </table>
 
 <hr>
