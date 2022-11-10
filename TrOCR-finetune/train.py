@@ -32,7 +32,7 @@ def main():
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
         fp16=True,
-        output_dir="./vit_bert",
+        output_dir="./models/vit_bert",
         logging_steps=100,
         save_steps=1000,
         eval_steps=500,

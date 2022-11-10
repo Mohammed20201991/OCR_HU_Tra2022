@@ -1,6 +1,12 @@
 # TrOCR_HU_2022
  **TrOCR Finetuning** 
- 
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+
 Important to note this baseline code provided by DHLab Researcher (<a href ="https://github.com/Mohammed20201991/OCR_HU_Tra2022/commit/8540285b77cde44169cedc8cb5e49fe807fde683">train.py</a> , <a href ="https://github.com/Mohammed20201991/OCR_HU_Tra2022/commit/c6f580c4268ddb846f2a48415044bb2e5ada755d">test.py</a>)which depend on official implementation for TrOCR <a href = "https://github.com/microsoft/unilm/tree/master/trocr">this repo</a>
 
 <ul dir="auto">
@@ -33,20 +39,21 @@ Example source code to finetune and test TrOCR models for handwritten text recog
 
 ~~~bash  
 !git clone https://github.com/Mohammed20201991/OCR_HU_Tra2022.git
-!cd OCR_HU_Tra2022
+!cd OCR_HU_Tra2022/TrOCR-finetune/
 ~~~
 
 <h4> Step 1: unzip the image files </h4>
 
 ~~~bash  
 !cd training-data-ex
-!unzip imgs.zip
+!unzip img.zip
 ~~~
 
 <h4> Step 2: finetune pre-trained model</h4>
 
-(pass 4 arguments text, coressponding image ,encoder and decoder )
+(pass 4 arguments text (segmented by lines), coressponding images ,encoder and decoder )
 ~~~bash
+!cd ..
 python3 train.py  training-data-ex/lines.txt training-data-ex/img/ google/vit-base-patch16-384 bert-base-uncased
 ~~~
 
@@ -72,12 +79,7 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
 
 ![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/TrOCR-finetune/images/illustration%20for%20%20%20Hungarain%20Transformer.PNG)
 
- <!DOCTYPE html>
-<html>
-<head>
-
-</head>
-<body>
+ 
 
 <h1 id ="Transformers Models Table">Transformers Models Table</h1>
 
@@ -357,4 +359,5 @@ Evaluation can be found on this jupyternotebook [Evaluating_TrOCR_base_handwritt
 
 ## <p id="Demo"> Demo :</p>
 
-
+</html>
+</body>
