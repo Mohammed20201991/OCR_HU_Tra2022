@@ -355,6 +355,6 @@ Fine-tuning TrOCR on HuDataset
 ## <p id ="Evaluation">Evaluation </p>
 Evaluation can be found on this jupyternotebook [Evaluating_TrOCR_base_handwritten_on_the_huData_test_set](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/Evaluating_TrOCR_base_handwritten_on_the_huData_test_set.ipynb)
 
-## <p id="Demo"> Demo</p>
+## <p id="Demo"> Demo :</p>
 
 
