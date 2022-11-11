@@ -204,8 +204,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>TrOCR-base-ver021-aicup-ft</td>
     <td> <a href="https://huggingface.co/ycchen/TrOCR-base-ver021-aicup-ft"> link-hugf</a></td>
     <td><a href="#roberta"> CLM </a></td>
-    <td></td>
-    <td></td>
+    <td>53.890</td>
+    <td>92.857</td>
   </tr>
   <tr>
     <td>5</td>
@@ -302,8 +302,8 @@ python3 script/test.py -d models/Arany200 test_examples -o output.txt
     <td>ViTgpt2</td>
     <td> <a href="#vit">ViT </a></td>
     <td> <a href="#gpt-2"> gpt2</a></td>
-    <td></td>
-    <td></td>
+    <td>362</td>
+    <td>281 </td>
   </tr>
  
  <tr>
