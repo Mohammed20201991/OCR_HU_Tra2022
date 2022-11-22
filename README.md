@@ -19,6 +19,7 @@ Important to note this baseline code provided by DHLab Researcher (<a href ="htt
 <li><a href="#Inference">Inference</a></li>
 <li><a href="#Evaluation">Evaluation</a></li>
 <li><a href="#Demo">Demo</a></li>
+<li><a href="#IAM">IAM</a></li>
 </ul>
 
 **<p id="Description">Description:</p>**
@@ -359,5 +360,29 @@ Evaluation can be found on this jupyternotebook [Evaluating_TrOCR_base_handwritt
 
 ## <p id="Demo"> Demo :</p>
 
+
+## <p id="IAM"> IAM :</p>
+Next step is to initilize the Transformers models with [IAM] dataset(https://fki.tic.heia-fr.ch/) that hase forms and this forms already segmented by (Words,Lines,Sentences and forms) where it converted the handwritten and annotated with ASIIC code .
+I process the raw-data to convert it to TrOCR format.
+<li> <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/IAM/IAM_words_processing.ipynb">[script]</a> for processing words(Text,Image)</li>
+<li> <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/IAM/IAM_Sentence_Processing.ipynb">[script]</a> for processing sentences (Text,Iamge)</li>
+<br>
+<table>
+<tr>
+    <th>Model Name</th>
+    <th>CER</th>
+    <th>WER</th>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td> </td>
+    <td></td>
+  </tr>
+</table>
 </html>
 </body>
