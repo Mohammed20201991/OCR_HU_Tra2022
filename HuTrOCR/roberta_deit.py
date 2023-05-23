@@ -1,7 +1,6 @@
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '5'  
-import torch , json ,evaluate ,argparse , logging
-from torch import nn
+import torch ,evaluate ,argparse , logging
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -10,9 +9,9 @@ from pynvml import *
 from torch.utils.data import Dataset
 from PIL import Image
 from transformers import (
-                            AutoTokenizer, VisionEncoderDecoderModel, RobertaTokenizer,
+                            AutoTokenizer, VisionEncoderDecoderModel, 
                             TrOCRProcessor, Seq2SeqTrainer, set_seed ,
-                            Seq2SeqTrainingArguments,default_data_collator
+                            Seq2SeqTrainingArguments,default_data_collator,
                          ) 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -31,6 +30,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 cer_metric = evaluate.load("cer")
 wer_metric = evaluate.load("wer")
+
 def print_gpu_utilization():
     nvmlInit()
     handle = nvmlDeviceGetHandleByIndex(0)
@@ -161,7 +161,6 @@ def load_jsonl():
                          path_or_buf = args.text_path, 
                          lines=True
                         )
-
 def main():
    
     logger.info("***** Arguments *****")    
@@ -226,17 +225,17 @@ def main():
     labels[labels == -100] = tokenizer.pad_token_id
     labels = labels[:model.config.max_length]
     label_str = tokenizer.decode(labels, skip_special_tokens=True)
-    print(label_str)
+    print('label_str' , label_str)
 
     print('step4')
     training_args = Seq2SeqTrainingArguments(
-                                              predict_with_generate=args.predict_with_generate,
-                                              evaluation_strategy=args.evaluation_strategy,
-                                              per_device_train_batch_size= args.train_batch_size, 
-                                              per_device_eval_batch_size= args.eval_batch_size, 
-                                              num_train_epochs= args.epochs,
-                                              fp16= args.fp16 ,
-                                              learning_rate= float(args.learning_rate), 
+                                              predict_with_generate = args.predict_with_generate,
+                                              evaluation_strategy   = args.evaluation_strategy,
+                                              per_device_train_batch_size = args.train_batch_size, 
+                                              per_device_eval_batch_size = args.eval_batch_size, 
+                                              num_train_epochs = args.epochs,
+                                              fp16 = args.fp16 ,
+                                              learning_rate = float(args.learning_rate), 
                                               output_dir = args.working_dir, 
                                             #   logging_dir=f'{args.working_dir}/logs',
                                               logging_steps=args.logging_steps,
@@ -244,7 +243,7 @@ def main():
                                               eval_steps=args.eval_steps,
                                               save_total_limit = args.save_total_limit,
                                               report_to= args.report_to,
-                                              load_best_model_at_end =args.load_best_model_at_end,       
+                                              load_best_model_at_end = args.load_best_model_at_end,       
                                             )
     # instantiate trainer
     trainer = Seq2SeqTrainer(
@@ -256,12 +255,11 @@ def main():
                               eval_dataset=eval_dataset,
                               data_collator=default_data_collator,
                             )
-
     # checkpoint_dir = args.checkpoint_dir
     trainer.train() 
+    
     # device = torch.device('cuda')
-
-    # Saves the model ,tokenizer and processor to make sure checkpointing works with correct config                
+    # Saves the model ,tokenizer and processor to make sure checkpointing works with correct config   
     tokenizer.save_pretrained(f'{args.working_dir}/tokenizer') 
     processor.save_pretrained(f'{args.working_dir}/processor')        
     trainer.save_model(output_dir = f'{args.working_dir}/model')
