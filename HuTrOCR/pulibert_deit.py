@@ -15,8 +15,10 @@ from transformers import (
                          ) 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from torch.utils.data import Dataset 
 from transformers.trainer_utils import get_last_checkpoint
 from evaluate import load 
+from PIL import Image
 from datetime import datetime
 
 time_now = datetime.now()

@@ -1,8 +1,8 @@
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '5'  
-import torch ,evaluate ,argparse , logging
 import numpy as np
 import pandas as pd
+import torch ,evaluate ,argparse , logging
 from tqdm import tqdm
 from IPython.display import display, HTML
 from pynvml import *
@@ -15,8 +15,10 @@ from transformers import (
                          ) 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from torch.utils.data import Dataset 
 from transformers.trainer_utils import get_last_checkpoint
 from evaluate import load 
+from PIL import Image
 from datetime import datetime
 
 time_now = datetime.now()
@@ -36,7 +38,6 @@ def print_gpu_utilization():
     handle = nvmlDeviceGetHandleByIndex(0)
     info = nvmlDeviceGetMemoryInfo(handle)
     print(f"GPU memory occupied: {info.used//1024**2} MB.")
-
 
 def print_summary(result):
     print(f"Time: {result.metrics['train_runtime']:.2f}")
@@ -120,15 +121,16 @@ class OCRDataset(Dataset):
         # prepare image (i.e. resize + normalize)
         image = Image.open(os.path.join(self.root_dir, file_name)).convert("RGB")
         pixel_values = self.processor(image, return_tensors="pt").pixel_values
-        # add labels (input_ids) by encoding the text      
+        # add labels (input_ids) by encoding the text 
+        # https://huggingface.co/docs/transformers/pad_truncation
         labels = self.tokenizer(text, 
                                 stride= args.stride, 
                                 truncation=True,
                                 padding="max_length", 
                                 max_length=self.max_target_length).input_ids        
-        # important: make sure that PAD tokens are ignored by the loss function
+        #Important: make sure that PAD tokens are ignored by the loss function
         labels = [label if label != self.tokenizer.pad_token_id else -100 for label in labels]
-        # print('\n labels: \n', labels)
+        # skiping <s>  start of token comming from tokenizer because this will be seting by Trocr model 
         labels= labels[1:]
         # encoding 
         return {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
@@ -154,8 +156,7 @@ def create_datasets(df: pd.DataFrame):
                                 max_target_length= args.max_length, 
                                )
     return train_dataset, eval_dataset ,train_df
-
-    
+   
 def load_jsonl():   
     return pd.read_json(
                          path_or_buf = args.text_path, 
@@ -197,10 +198,11 @@ def main():
     # set decoder config to causal lm
     # model.config.decoder.is_decoder = True
     model.config.decoder.add_cross_attention = True
-    
+    # Let's verify an example from the training dataset
     # set special tokens used for creating the decoder_input_ids from the labels
     model.config.decoder_start_token_id = tokenizer.cls_token_id
     model.config.pad_token_id = tokenizer.pad_token_id
+    # Make sure vocab size is set correctly
     model.config.vocab_size = model.config.decoder.vocab_size
 
     # set beam search parameters
@@ -255,9 +257,12 @@ def main():
                               eval_dataset=eval_dataset,
                               data_collator=default_data_collator,
                             )
-    # checkpoint_dir = args.checkpoint_dir
-    trainer.train() 
     
+    
+    
+    
+    # checkpoint_dir = args.checkpoint_dir
+    trainer.train()     
     # device = torch.device('cuda')
     # Saves the model ,tokenizer and processor to make sure checkpointing works with correct config   
     tokenizer.save_pretrained(f'{args.working_dir}/tokenizer') 
