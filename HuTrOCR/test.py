@@ -1,18 +1,6 @@
-# from transformers import TrOCRProcessor, VisionEncoderDecoderModel, AutoTokenizer
-# import requests 
-# from io import BytesIO
-# from PIL import Image
-
-# processor = TrOCRProcessor.from_pretrained("/home/ngyongyossy/mohammad/OCR_HU_Tra2022/1/base_lines_hu_v4/processor") 
-# model = VisionEncoderDecoderModel.from_pretrained("/home/ngyongyossy/mohammad/OCR_HU_Tra2022/1/base_lines_hu_v4/checkpoint-50")
-
-# img =  '/home/ngyongyossy/mohammad/OCR_HU_Tra2022/GPT-2_Parallel/process/MixedData/images/276-17.jpg'
-# img = Image.open(img).convert("RGB")
-# pixel_values = processor(images=img, return_tensors="pt").pixel_values
-
-# generated_ids = model.generate(pixel_values)
-# generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
-# print(generated_ids ,generated_text)
+# for accessing private models type in your terminale 
+# huggingface-cli login
+# Tthen copy and past prvoided token ="token to be used will be secrit"
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '4'
 import pandas as pd
@@ -22,22 +10,35 @@ from PIL import Image
 from transformers import TrOCRProcessor ,VisionEncoderDecoderModel
 from tqdm.notebook import tqdm
 from evaluate import load
-parser = argparse.ArgumentParser(description="Example script for Testing TrOCR model",
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("test_path", help="Location of transcriptions (single text JSON lines file)")
-parser.add_argument("imgs_path", help="Location of test image files (folder)")
-args = parser.parse_args()
-config = vars(args)
 
-test_text = config['test_path']
-test_imgs = config['imgs_path']
-GET_MODEL_BY_ID = False 
+# def parser_args(train_notebook=False):
+train_notebook = False   
+parser = argparse.ArgumentParser()
+
+# Featuers + Labels
+parser.add_argument("--text_path", default= '../Data/DH-Lab/test.jsonl', help="Location of transcriptions (single train file)")
+parser.add_argument("--images_path", default= '../Data/DH-Lab/images/', help="Location of image files (folder)")
+
+parser.add_argument("--test_batch_size", type=int, default = 16)
+parser.add_argument("--get_model_id", type=bool, default = True)
+parser.add_argument("--stride", type=int, default = 32)
+parser.add_argument("--nlp_model_dir", type=str, default='AlhitawiMohammed22/trocr_large_hu_lines_v2_2')
+parser.add_argument("--model_id", type=str, default='AlhitawiMohammed22/trocr_large_hu_lines_v2_2')
+parser.add_argument("--processor_dir", type=str, default='AlhitawiMohammed22/trocr_large_hu_lines_v2_2')
+parser.add_argument("--load_model_from_checkpoint_dir", type=str, default='./Models/PULI-BERT_Deit')
+# Model Configuration 
+parser.add_argument("--num_beams", type=int, default= 4 ) 
+parser.add_argument("--max_length", type=int, default= 128)
+
+args = parser.parse_args([]) if not train_notebook else parser.parse_args()
+# return args
+print('args : ', args)
 SKIP_SPECIAL_TOKENS = True
 cer = load("cer")
 wer = load("wer")
 
 class OCRDataset(Dataset):
-    def __init__(self, root_dir, df, processor, max_target_length= 64): 
+    def __init__(self, root_dir, df, processor, max_target_length= args.max_length): 
         self.root_dir = root_dir
         self.df = df
         self.processor = processor
@@ -58,7 +59,7 @@ class OCRDataset(Dataset):
         pixel_values = self.processor(image, return_tensors="pt").pixel_values
         # add labels (input_ids) by encoding the text
         labels = self.processor.tokenizer(text, 
-                                        #   stride=32,# roberta case 
+                                        #   stride=args.stride, # roberta case and puli 
                                           padding="max_length",
                                           truncation=True, # this is new trying to solve not equal lenths 
                                           max_length=self.max_target_length).input_ids
@@ -71,27 +72,25 @@ class OCRDataset(Dataset):
 
 def load_jsonl():
     return pd.read_json(
-                        path_or_buf = test_text,
+                        path_or_buf = args.text_path,
                         lines=True) 
 def main(): 
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    MODL_ID = 'AlhitawiMohammed22/trocr_large_hu_Arrany_3'
-    load_model_from_checkpoint_dir = '/home/ngyongyossy/mohammad/OCR_HU_Tra2022/1/trocr_large_lines_44_ft_on_dh-lab_aug/'
-    if GET_MODEL_BY_ID: 
-        processor = TrOCRProcessor.from_pretrained(MODL_ID)
-        model = VisionEncoderDecoderModel.from_pretrained(MODL_ID)
+    if args.get_model_id: 
+        processor = TrOCRProcessor.from_pretrained(args.processor_dir)
+        model = VisionEncoderDecoderModel.from_pretrained(args.model_id)
     else:
-        processor = TrOCRProcessor.from_pretrained(f'{load_model_from_checkpoint_dir}processor') 
-        model = VisionEncoderDecoderModel.from_pretrained(f'{load_model_from_checkpoint_dir}checkpoint-81000')
+        processor = TrOCRProcessor.from_pretrained(f'{args.load_model_from_checkpoint_dir}/processor') 
+        model = VisionEncoderDecoderModel.from_pretrained(f'{args.load_model_from_checkpoint_dir}/checkpoint-81000')
     model.to(device) 
 
     df =   load_jsonl()
     print(df.head(2),df.tail(2)) 
-    test_dataset = OCRDataset(root_dir=test_imgs,
+    test_dataset = OCRDataset(root_dir= args.images_path,
                               df=df,
                               processor=processor)    
-    test_dataloader = DataLoader(test_dataset, batch_size= 24)
+    test_dataloader = DataLoader(test_dataset, batch_size= args.test_batch_size)
     batch = next(iter(test_dataloader))
     print('batch shape : ',type(batch))
     for k,v in batch.items():
@@ -105,7 +104,7 @@ def main():
     for batch in tqdm(test_dataloader):
         # predict using generate
         pixel_values = batch["pixel_values"].to(device)
-        outputs = model.generate(pixel_values , max_length = 64) # repres max_seq -12 #,eos_token ,pad_token_id=processor.tokenizer.eos_token_id
+        outputs = model.generate(pixel_values , max_length = args.max_length) # repres max_seq -12 #,eos_token ,pad_token_id=processor.tokenizer.eos_token_id
         # decode
         pred_str = processor.batch_decode(outputs, skip_special_tokens = SKIP_SPECIAL_TOKENS)
         print('pred_str',pred_str)
@@ -124,4 +123,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# python3 test.py path/to/test.jsonl  path/to/images/

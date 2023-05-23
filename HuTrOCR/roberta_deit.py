@@ -237,7 +237,7 @@ def main():
                                               fp16 = args.fp16 ,
                                               learning_rate = float(args.learning_rate), 
                                               output_dir = args.working_dir, 
-                                            #   logging_dir=f'{args.working_dir}/logs',
+                                              # logging_dir=f'{args.working_dir}/logs',
                                               logging_steps=args.logging_steps,
                                               save_steps= args.save_steps,
                                               eval_steps=args.eval_steps,
