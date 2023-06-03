@@ -1,22 +1,20 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '5'  
-import torch ,evaluate ,argparse, logging 
+os.environ['CUDA_VISIBLE_DEVICES'] = '5' 
 import numpy as np
-import pandas as pd
+import pandas as pd 
+import torch ,evaluate ,argparse, logging 
 from tqdm import tqdm
-from IPython.display import display, HTML
 from pynvml import *
 from torch.utils.data import Dataset
 from PIL import Image
 from transformers import (
                             AutoTokenizer, VisionEncoderDecoderModel,
-                            TrOCRProcessor, Seq2SeqTrainer, set_seed ,
+                            TrOCRProcessor, RobertaTokenizer, Seq2SeqTrainer, 
                             Seq2SeqTrainingArguments,default_data_collator
                          ) 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset 
-from transformers.trainer_utils import get_last_checkpoint
 from evaluate import load 
 from PIL import Image
 from datetime import datetime
@@ -39,16 +37,15 @@ def print_gpu_utilization():
     info = nvmlDeviceGetMemoryInfo(handle)
     print(f"GPU memory occupied: {info.used//1024**2} MB.")
 
-
 def print_summary(result):
     print(f"Time: {result.metrics['train_runtime']:.2f}")
     print(f"Samples/second: {result.metrics['train_samples_per_second']:.2f}")
     print_gpu_utilization()
 
-
 train_notebook = True     
-parser = argparse.ArgumentParser(description="Example script for lavearging Robeta with Deit model",
-                                formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser( description="Example script for lavearging Robeta with Deit model",
+                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter
+                                )
 
 # Featuers + Labels
 parser.add_argument("--text_path", default= '../Data/DH-Lab/train.jsonl', help="Location of transcriptions (single train file)")
@@ -64,16 +61,17 @@ parser.add_argument("--eval_batch_size", type=int, default=16)
 parser.add_argument("--stride", type=int, default=32)
 parser.add_argument("--warmup_steps", type=int, default=100)
 parser.add_argument("--logging_steps", type=int, default=10)  
-parser.add_argument("--save_steps", type=int, default= 50) 
-parser.add_argument("--eval_steps", type=int, default= 50) 
+parser.add_argument("--save_steps", type=int, default= 5000) 
+parser.add_argument("--eval_steps", type=int, default= 5000) 
 parser.add_argument("--save_total_limit", type=int, default= 1)
-parser.add_argument("--learning_rate", type=str, default=4e-5)
+parser.add_argument("--learning_rate", type=str, default=5e-5)
 parser.add_argument("--disable_tqdm", type=bool, default=False)
 parser.add_argument("--fp16", type=bool, default=True)
 parser.add_argument("--load_best_model_at_end", type=bool, default=True)
 parser.add_argument("--debug", type=bool, default=False)
 parser.add_argument("--report_to", type=list, default=["tensorboard"]) 
 parser.add_argument("--resume_from_checkpoint", type=bool or str, default=False)
+parser.add_argument("--gradient_checkpointing", type= bool, default= False)
 parser.add_argument("--full_train", type= bool, default = True )
 parser.add_argument("--nlp_model_dir", type=str, default='NYTK/PULI-BERT-Large')
 parser.add_argument("--vision_model_dir", type=str, default='facebook/deit-base-distilled-patch16-384')   
@@ -85,20 +83,20 @@ parser.add_argument("--num_beams", type=int, default= 4 )
 parser.add_argument("--max_length", type=int, default= 128)
 parser.add_argument("--early_stopping", type= bool, default= True ) 
 # OCR_HU_Tra2022 Container environment 
-parser.add_argument("--working_dir", type=str, default='Models/PULI-BERT_Deit')
+parser.add_argument("--working_dir", type=str, default='Models/PULI-BERT_Deit/')
 parser.add_argument("--n_gpus", type=str, default = '8')
-args = parser.parse_args([]) if train_notebook else parser.parse_args()
-    # return args 
+if train_notebook :
+    args = parser.parse_args()
 
 def compute_metrics(pred):
     labels_ids = pred.label_ids
     pred_ids   = pred.predictions
 
     pred_str = processor.tokenizer.batch_decode(pred_ids, skip_special_tokens= True)
-    print('\n pred_str : ',pred_str)
+    # print('\n pred_str : ',pred_str)
     labels_ids[labels_ids == -100] = processor.tokenizer.pad_token_id
     label_str = processor.tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
-    print('\n \n label_str : ', label_str)
+    # print('\n \n label_str : ', label_str)
     cer = cer_metric.compute(predictions=pred_str, references=label_str) *100
     wer = wer_metric.compute(predictions=pred_str, references=label_str) *100
 
@@ -110,7 +108,6 @@ class OCRDataset(Dataset):
         self.df = df
         self.processor = processor
         self.max_target_length = max_target_length
-        self.tokenizer = processor.tokenizer
 
     def __len__(self):
         return len(self.df)
@@ -122,41 +119,45 @@ class OCRDataset(Dataset):
         # prepare image (i.e. resize + normalize)
         image = Image.open(os.path.join(self.root_dir, file_name)).convert("RGB")
         pixel_values = self.processor(image, return_tensors="pt").pixel_values
-        # add labels (input_ids) by encoding the text      
+        '''
+        add labels (input_ids) by encoding the text 
+        https://huggingface.co/docs/transformers/pad_truncation
+        '''
         labels = self.processor.tokenizer( text, 
                                            stride=args.stride,
                                            truncation=True,
                                            padding="max_length", 
                                            max_length=self.max_target_length).input_ids       
-        # important: make sure that PAD tokens are ignored by the loss function
+        # Important: make sure that PAD tokens are ignored by the loss function
         labels = [label if label != self.processor.tokenizer.pad_token_id else -100 for label in labels]
-        # print('\n labels: \n', labels)
+        '''
+        skiping <s>  start of token comming from tokenizer because this will be seting by Trocr model 
+        the returned value here is encoding 
+        '''
         labels= labels[1:]
-        # encoding 
         return {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
 
-# We split up the data into training + validation, using sklearn's train_test_split function.
-# And the test set alrady disjoint 
+'''
+We split up the data into training + validation, using sklearn's train_test_split function.
+And the test set alrady disjoint 
+'''
 def create_datasets(df: pd.DataFrame):
-    train_df, val_df = train_test_split(df, test_size=0.1, random_state=42069)
+    train_df, val_df = train_test_split(df, test_size=0.1, random_state= 42069)
     # We reset the indices to start from zero
     train_df.reset_index(drop=True, inplace=True)
     val_df.reset_index(drop=True, inplace=True)
 
-    train_dataset = OCRDataset( root_dir=args.images_path,
-        			            df=train_df,
-                                # tokenizer = tokenizer,
+    train_dataset = OCRDataset( root_dir= args.images_path,
+        			            df = train_df,
         			            processor = processor,
-                                max_target_length = 96,
+                                max_target_length = args.max_length,
                                )
     eval_dataset =  OCRDataset( root_dir=args.images_path,
         			            df= val_df,
-                                # tokenizer = tokenizer,
         			            processor = processor,
-                                max_target_length= 96, 
+                                max_target_length= args.max_length, 
                                )
-    return train_dataset, eval_dataset ,train_df
-
+    return train_dataset, eval_dataset, train_df
 
 def load_jsonl():   
     return pd.read_json(
@@ -168,59 +169,59 @@ def main():
     logger.info("***** Arguments *****")    
     logger.info(''.join(f'{k}={v}\n' for k, v in vars(args).items()))
 
-    print('step0')
     # os.makedirs(args.chkpt_dir, exist_ok=True) 
     # os.makedirs(args.model_dir, exist_ok=True)
     # os.makedirs(args.output_data_dir, exist_ok=True)    
     
-    print('step1')
     df = load_jsonl()
     print(df.head(2),df.tail(2)) 
     # From testing max seq length we can guess the length of the tokens by :  
     # 1- Getting the  max Seq. in the  df 
     # 2- Do tokenize with the corresponding tokenizer and get its length by index  
-    # 3 - Set value to model config (max_len)
+    # 3- Set value to model config (max_len)
     print('Max sequence length is : ',df.text.str.len().max())
     print('\n Index of Max seq length is : ',df.text.str.len().idxmax())
     print('\n Text for max Seq length  : ', df['text'][df.text.str.len().idxmax()])
     print('\n Path to image with max Seq. ', args.images_path +df['file_name'][df.text.str.len().idxmax()])
-
-    suggested_max_token_len = len(processor.tokenizer(df['text'][df.text.str.len().idxmax()])["input_ids"])
-    print('\n The Length of max tokenized row  : ',suggested_max_token_len,
-          '\n Token ids for max tokens : ', (processor.tokenizer(df['text'][df.text.str.len().idxmax()])["input_ids"])
-         )
+    if args.full_train == False:
+        tokenizer = RobertaTokenizer.from_pretrained(args.nlp_model_dir)
+        suggested_max_token_len = len(tokenizer(df['text'][df.text.str.len().idxmax()])["input_ids"])
+        print('\n The Length of max tokenized row  : ',suggested_max_token_len,
+              '\n Token ids for max tokens : ', (tokenizer(df['text'][df.text.str.len().idxmax()])["input_ids"])
+             )
+    else:
+        suggested_max_token_len = len(processor.tokenizer(df['text'][df.text.str.len().idxmax()])["input_ids"])
+        print('\n The Length of max tokenized row  : ',suggested_max_token_len,
+              '\n Token ids for max tokens : ', (processor.tokenizer(df['text'][df.text.str.len().idxmax()])["input_ids"])
+             )
  
-    train_dataset, eval_dataset ,train_df = create_datasets(df) 
+    train_dataset, eval_dataset, train_df = create_datasets(df) 
 
     print("Number of training examples:", len(train_dataset))
     print("Number of validation examples:", len(eval_dataset))  
 
-    print('step3')
-    # set decoder config to causal lm
-    # model.config.decoder.is_decoder = True
+    '''
+    set decoder config to causal lm
+    model.config.decoder.is_decoder = True
+    '''
     model.config.decoder.add_cross_attention = True
-    
-    # set special tokens used for creating the decoder_input_ids from the labels
-    print('Before model.config.decoder_start_token_id : ', model.config.decoder_start_token_id)
-    model.config.decoder_start_token_id = processor.tokenizer.cls_token_id #2
-    print( f'\n model.config.decoder_start_token    : {processor.tokenizer.cls_token}',
-           f'\n model.config.decoder_start_token_id : {model.config.decoder_start_token_id}'
-         )
-    print(f'\n Before --> model.config.pad_token_id {model.config.pad_token_id}')
+    '''
+    Let's verify an example from the training dataset
+    set special tokens used for creating the decoder_input_ids from the labels
+    '''
+    model.config.decoder_start_token_id = processor.tokenizer.cls_token_id # 2
     model.config.pad_token_id = processor.tokenizer.pad_token_id # 0
-    model.config.pad_token = '[PAD]'
-    print(  f'\n model.config.pad_token{model.config.pad_token}',
-            f'\n model.config.pad_token_id{model.config.pad_token_id}'
-         )
-    print(f'\n model.config.decoder.vocab_size : {model.config.decoder.vocab_size}')
+    '''
+    Here if we are using languge model to be fine-tune 
+    it needs some spicial setup. 
+    '''
+    if args.nlp_model_dir == 'NYTK/PULI-BERT-Large':
+        model.config.pad_token = '[PAD]' 
+    # Make sure vocab size is set correctly
     model.config.vocab_size = model.config.decoder.vocab_size
 
     # set beam search parameters
-    print(f'\n Before model.config.eos_token_id{model.config.eos_token_id}') #3
-    model.config.eos_token_id = processor.tokenizer.sep_token_id
-    print( f'\n model.config.eos_token{processor.tokenizer.sep_token}' ,
-           f'\n model.config.eos_token_id{model.config.eos_token_id}'
-          )
+    model.config.eos_token_id =  processor.tokenizer.sep_token_id # 3
     model.config.max_length = max(suggested_max_token_len,  args.max_length)
     model.config.early_stopping = args.early_stopping
     model.config.no_repeat_ngram_size = 3
@@ -239,50 +240,53 @@ def main():
 
     labels = encoding['labels']
     labels[labels == -100] = processor.tokenizer.pad_token_id
-    labels = labels[:96]
+    labels = labels[:model.config.max_length]
+    # if we are using trocr large we need to change to processor.decode instead of processor.tokenizer.decode
     label_str = processor.tokenizer.decode(labels, skip_special_tokens= True)
     print('label_str : ',label_str)
-
-    print('step4')
 
     training_args = Seq2SeqTrainingArguments(
                                               predict_with_generate = args.predict_with_generate,
                                               evaluation_strategy = args.evaluation_strategy,
                                               per_device_train_batch_size = args.train_batch_size, 
-                                              per_device_eval_batch_size = args.eval_batch_size, 
+                                              per_device_eval_batch_size  = args.eval_batch_size, 
                                               num_train_epochs = args.epochs,
-                                              fp16 = args.fp16 ,
+                                              fp16 = args.fp16,
                                               learning_rate = float(args.learning_rate), 
                                               output_dir = args.working_dir,
-                                              #  logging_dir=f'{args.working_dir}/logs',
+                                              # in case trocr may need to uncomment below  
+                                              # logging_dir=f'{args.working_dir}/logs',
                                               logging_steps=args.logging_steps,
                                               save_steps= args.save_steps,
-                                              eval_steps=args.eval_steps,
+                                              eval_steps = args.eval_steps,
                                               save_total_limit = args.save_total_limit,
-                                              report_to= args.report_to ,
-                                              load_best_model_at_end = args.load_best_model_at_end,       
+                                              report_to= args.report_to,
+                                              load_best_model_at_end = args.load_best_model_at_end,
+                                              # Gradient check-pointing is only needed if training leads to out-of-memory (OOM) errors 
+                                              gradient_checkpointing = args.gradient_checkpointing, 
                                             )
     # instantiate trainer
     trainer = Seq2SeqTrainer(
-                              model=model,
-                              tokenizer=processor.tokenizer,
-                              args=training_args,
-                              compute_metrics=compute_metrics,
-                              train_dataset=train_dataset,
-                              eval_dataset=eval_dataset,
-                              data_collator=default_data_collator,
+                              model = model,
+                              tokenizer = processor.feature_extractor if args.full_train else processor.tokenizer,                              
+                              args = training_args,
+                              compute_metrics = compute_metrics,
+                              train_dataset = train_dataset,
+                              eval_dataset  = eval_dataset,
+                              data_collator = default_data_collator,
                             )
     # checkpoint_dir = args.checkpoint_dir
     trainer.train() 
     
-    # device = torch.device('cuda')
-    # Saves the model ,tokenizer and processor to make sure checkpointing works with correct config 
-    processor.tokenizer.save_pretrained(f'{args.working_dir}/tokenizer') 
-    processor.save_pretrained(f'{args.working_dir}/processor')        
-    trainer.save_model(output_dir = f'{args.working_dir}/model')
-    # Or model.save_pretrained(f'{working_dir}model')
+    # Saves the model, tokenizer and processor to make sure checkpointing works with correct config 
+    processor.tokenizer.save_pretrained(f'{args.working_dir}tokenizer') 
+    processor.save_pretrained(f'{args.working_dir}processor')        
+    trainer.save_model(output_dir = f'{args.working_dir}model')
+    '''
+      Or model.save_pretrained(f'{working_dir}model')
 
-    # After training, access the path of the best checkpoint 
+      After training, access the path of the best checkpoint like this
+    ''' 
     best_ckpt_path = trainer.state.best_model_checkpoint
     print('best_ckpt_path', best_ckpt_path)
     print('/-------- +++++++++ --------/')       
@@ -307,38 +311,26 @@ def main():
         eval_result = trainer.evaluate(eval_dataset, max_length = args.max_length) 
     print('\n\neval_result\n',eval_result)
 
+
 if __name__ == "__main__":
 
-    # args = parser_args(train_notebook=True)    
-    print(args)
-    
+    print(args)    
     n_gpus = torch.cuda.device_count()
     print('n_gpus', n_gpus)
     
-    print('step') 
     processor = TrOCRProcessor.from_pretrained(args.processor_dir)
     if args.full_train:
         model = VisionEncoderDecoderModel.from_encoder_decoder_pretrained(args.vision_model_dir, args.nlp_model_dir)
-        processor.tokenizer = AutoTokenizer.from_pretrained(args.nlp_model_dir)
-        
-        # print(f'Bfore pad_token{processor.tokenizer.pad_token}', f'pad_token_id   : {processor.tokenizer.pad_token_id}\n')
-        # # tokenizer.pad_token = tokenizer.eos_token
-        # # tokenizer.add_special_tokens({'After pad_token': '[PAD]'})
-        # print(f'pad_token{processor.tokenizer.pad_token}', f'pad_token_id{processor.tokenizer.pad_token_id}\n')
-        # print(f'cls_token{processor.tokenizer.cls_token}', f'cls_token_id{processor.tokenizer.cls_token_id}\n')
-        # print(f'bos_token{processor.tokenizer.bos_token}', f'bos_token_id{processor.tokenizer.bos_token_id}\n')
-        # print(f'eos_token{processor.tokenizer.eos_token}', f'eos_token_id{processor.tokenizer.eos_token_id}\n')
-        # print(f'unk_token{processor.tokenizer.unk_token}', f'unk_token_id{processor.tokenizer.unk_token_id}\n')
-        # print(f'sep_token{processor.tokenizer.sep_token}', f'sep_token_id{processor.tokenizer.sep_token_id}\n')
-        # # print('\n tokenizer.config \n\n',tokenizer.config)
+        processor.tokenizer = AutoTokenizer.from_pretrained(args.nlp_model_dir)   
     else:
-
+        '''
+        Fine-tunning
+        '''
         model = VisionEncoderDecoderModel.from_pretrained(args.ft_model_id)
-        tokenizer = AutoTokenizer.from_pretrained(args.ft_model_id)
+        processor.tokenizer = AutoTokenizer.from_pretrained(args.ft_model_id)
 
     print('Current DateTime:', time_now)
     print('Type:', type(time_now))
-
     main() 
 
     time_after_train_finsh = datetime.now()
