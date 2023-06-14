@@ -8,9 +8,9 @@ from pynvml import *
 from torch.utils.data import Dataset
 from PIL import Image
 from transformers import (Seq2SeqTrainer, Seq2SeqTrainingArguments, 
-                          set_seed ,AutoTokenizer , 
+                          set_seed ,AutoTokenizer, 
                           TrOCRProcessor, RobertaTokenizer,
-                          VisionEncoderDecoderModel,default_data_collator ,
+                          VisionEncoderDecoderModel,default_data_collator,
                          )
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -44,7 +44,7 @@ def print_summary(result):
     
 train_notebook = True 
 parser = argparse.ArgumentParser( description="Example script for lavearging Robeta with Deit model",
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter
+                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter
                                 )
 
 # Featuers + Labels
@@ -99,7 +99,7 @@ def compute_metrics(pred):
     # print('\n \n label_str : ', label_str)
     cer = cer_metric.compute(predictions=pred_str, references=label_str) * 100
     wer = wer_metric.compute(predictions=pred_str, references=label_str) * 100
-    # print('\n \n label_str : ', label_str)
+
     return {"cer": cer, 'wer': wer, }
 
 class OCRDataset(Dataset):
@@ -124,38 +124,38 @@ class OCRDataset(Dataset):
 		https://huggingface.co/docs/transformers/pad_truncation
         '''
         labels = self.processor.tokenizer(text, 
-                                          # stride= args.stride, # during training trocr large this commented
-					                      truncation=True, # this is now trying to solve not equal lengths during batch passing 
+                                          stride= args.stride, # during training trocr large this commented
+					                      truncation=True, # this is will solve not equal lengths during batch passing
                                           padding="max_length",
                                           max_length=self.max_target_length).input_ids
         # Important: make sure that PAD tokens are ignored by the loss function
         labels = [label if label != self.processor.tokenizer.pad_token_id else -100 for label in labels]
         '''
-        skiping <s> start of token comming from tokenizer because this will be seting by Trocr model 
+        Skiping <s> start of token comming from tokenizer because this will be seting by Trocr model 
         the returned value here is encoding 
         '''
         labels = labels[1:]  
         return {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
 
-''' 
-We split up the data into training + validation, using sklearn's train_test_split function.
-And the test set alrady disjoint
-''' 
 def create_datasets(df: pd.DataFrame):
+    ''' 
+    We split up the data into training + validation, using sklearn's train_test_split function.
+    And the test set alrady disjoint
+    ''' 
     train_df, val_df = train_test_split(df, test_size = 0.1, random_state=42069)
     # We reset the indices to start from zero
     train_df.reset_index(drop=True, inplace=True)
     val_df.reset_index(drop=True, inplace=True)
 
     train_dataset = OCRDataset( root_dir= args.images_path,
-        			            df=train_df,
-                                processor=processor,
+        			            df = train_df,
+                                processor = processor,
                                 max_target_length = args.max_length,
                               )
     eval_dataset =  OCRDataset( root_dir= args.images_path,
         			            df= val_df,
-                                processor=processor,
-                                max_target_length = args.max_length,
+                                processor = processor,
+                                max_target_length= args.max_length,
                               )
     return train_dataset, eval_dataset,  train_df
 
@@ -200,16 +200,20 @@ def main():
     print("Number of training examples:", len(train_dataset))
     print("Number of validation examples:", len(eval_dataset))
 
-    # set decoder config to causal lm
-    # model.config.decoder.is_decoder = True
-    model.config.decoder.add_cross_attention = True
-    # Let's verify an example from the training dataset
-    # Set special tokens used for creating the decoder_input_ids from the labels
-    model.config.decoder_start_token_id = processor.tokenizer.cls_token_id
-    model.config.pad_token_id = processor.tokenizer.pad_token_id
     '''
-    Here if we are using languge model to be fine-tune 
-    it needs some spicial setup . 
+    Set decoder config to causal lm
+    model.config.decoder.is_decoder = True
+    '''
+    model.config.decoder.add_cross_attention = True
+    '''
+    Let's verify an example from the training dataset
+    Set special tokens used for creating the decoder_input_ids from the labels
+    '''
+    model.config.decoder_start_token_id = processor.tokenizer.cls_token_id # 2 In case PULI
+    model.config.pad_token_id = processor.tokenizer.pad_token_id # 0 In case PULI
+    '''
+    Here if we are using Languge Model(LM) to be fine-tune 
+    it needs some special setup . 
     '''
     if args.nlp_model_dir == 'NYTK/PULI-BERT-Large':
         model.config.pad_token = '[PAD]'
@@ -236,8 +240,8 @@ def main():
 
     labels = encoding['labels']
     labels[labels == -100] = processor.tokenizer.pad_token_id
-    labels = labels[:model.config.max_length] # ? 
-    # if we are using trocr large we need to change to processor.decode instead of processor.tokenizer.decode  
+    labels = labels[:model.config.max_length]  
+    # If we are using TrOCR large we need to change to processor.decode instead of processor.tokenizer.decode  
     label_str = processor.decode(labels, skip_special_tokens=True)
     print('label_str' , label_str)
 
@@ -250,7 +254,7 @@ def main():
                                               fp16 = args.fp16,
                                               learning_rate = float(args.learning_rate), 
                                               output_dir = args.working_dir, 
-                                              # in case trocr may need to uncomment below 
+                                              # In case TrOCR may need to uncomment below to save logs
                                               # logging_dir=f'{args.working_dir}/logs',
                                               logging_steps=args.logging_steps,
                                               save_steps= args.save_steps,
@@ -321,6 +325,7 @@ if __name__ == "__main__":
     else:
         '''
         Fine-tunning
+        or Re pre-training 
         '''
         model = VisionEncoderDecoderModel.from_pretrained(args.ft_model_id)
         processor.tokenizer = AutoTokenizer.from_pretrained(args.ft_model_id)

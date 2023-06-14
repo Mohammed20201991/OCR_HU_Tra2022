@@ -158,12 +158,12 @@ def create_datasets(df: pd.DataFrame):
                                 max_target_length= args.max_length, 
                                )
     return train_dataset, eval_dataset, train_df
-
 def load_jsonl():   
     return pd.read_json(
                          path_or_buf = args.text_path, 
                          lines=True
                         )
+
 def main():
    
     logger.info("***** Arguments *****")    
@@ -241,7 +241,7 @@ def main():
     labels = encoding['labels']
     labels[labels == -100] = processor.tokenizer.pad_token_id
     labels = labels[:model.config.max_length]
-    # if we are using trocr large we need to change to processor.decode instead of processor.tokenizer.decode  
+    # If we are using trocr large we need to change to processor.decode instead of processor.tokenizer.decode  
     label_str = processor.tokenizer.decode(labels, skip_special_tokens=True)
     print('label_str' , label_str)
 
@@ -254,7 +254,7 @@ def main():
                                               fp16 = args.fp16,
                                               learning_rate = float(args.learning_rate), 
                                               output_dir = args.working_dir,
-                                              # in case trocr may need to uncomment below  
+                                              # In case TrOCR may need to uncomment line below to save logs
                                               # logging_dir=f'{args.working_dir}/logs',
                                               logging_steps = args.logging_steps,
                                               save_steps = args.save_steps,

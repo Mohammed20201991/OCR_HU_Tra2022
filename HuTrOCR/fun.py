@@ -21,25 +21,25 @@ from transformers import (Seq2SeqTrainer,
 
 
 torch.cuda.is_available()
-parser = argparse.ArgumentParser(description="Example script for finetuning TrOCR model",
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("text_path", help="Location of transcriptions (single text file)")
-parser.add_argument("images_path", help="Location of image files (folder)")
+# parser = argparse.ArgumentParser(description="Example script for finetuning TrOCR model",
+#                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+# parser.add_argument("text_path", help="Location of transcriptions (single text file)")
+# parser.add_argument("images_path", help="Location of image files (folder)")
 
-parser.add_argument("encoder_type", type = str ,help="Which type of featuers Extraction)")
-parser.add_argument("decoder_type", help="Which type of Text Generation (huggingface model)")
+# parser.add_argument("encoder_type", type = str ,help="Which type of featuers Extraction)")
+# parser.add_argument("decoder_type", help="Which type of Text Generation (huggingface model)")
 
-args = parser.parse_args()
-config = vars(args)    
+# args = parser.parse_args()
+# config = vars(args)    
 
-cer_metric = load_metric("cer")
-wer_metric = load_metric('wer')
-processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
-train_text = config['text_path']
-train_img = config['images_path']
+# cer_metric = load_metric("cer")
+# wer_metric = load_metric('wer')
+# processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+# train_text = config['text_path']
+# train_img = config['images_path']
 
-Encoder = config['encoder_type']
-Decoder = config['decoder_type']
+# Encoder = config['encoder_type']
+# Decoder = config['decoder_type']
 
 # Decoder = "bert-base-uncased"
 # Encoder = "google/vit-base-patch16-384"
