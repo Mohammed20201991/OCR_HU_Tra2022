@@ -1,4 +1,4 @@
-# Devloped Text Recognition Data Generator toolkit 
+# Devloped Handwritten Text Recognition Data Generator toolkit 
 
 A synthetic data generator for text recognition task modfied for Hungarain languge by adding new fonts that support Hungarain special characters 
 
