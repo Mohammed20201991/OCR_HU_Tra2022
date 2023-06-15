@@ -194,7 +194,8 @@ This data is private upon request only for Academic research
 <li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/En_Words_Dict">En_Words_Dict</a></li>
 <li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/En_Brown_lines">En_Brown_lines</a></li>
 </ul>
-## Acknowledgment: 
+
+### Acknowledgment: 
 This work has been done using the infrastructure of the ELTE University Researcher, Under the supervision of (Gyöngyössy Natabara Máté)
 
 ## References:
