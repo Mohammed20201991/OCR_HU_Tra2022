@@ -1,5 +1,3 @@
-# requierments albumentations,
-# pip install -U albumentations
 import os , time ,random ,shutil ,requests ,json ,zipfile , time 
 import cv2
 import numpy as np
@@ -9,6 +7,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from pathlib import Path
 from tqdm import tqdm
+
 # -------------- BEGIN OF CONFIGURATION ---------------------
 WORKING_DIR = '/home/ngyongyossy/mohammad/OCR_HU_Tra2022/data_aug/'
 TEXT_PATH = f'{WORKING_DIR}source/labels.jsonl'
@@ -17,9 +16,13 @@ AUG_LABELS_PATH = f'{WORKING_DIR}destination/aug_labels.jsonl'
 HANDLE_MISSING    = False
 MANY_AUGMENTATION = True
 # -------------- END   OF CONFIGURATION ---------------------
-# Function that gets PIL image and returns augmented PIL image
+
 def augment_img(img):
-  # only augment 3/4th the images
+  '''
+  Function that gets PIL image and returns augmented PIL image depend on 
+  how many augmented images you want "e.g" if we want 4 times augmented data 
+  we augment only 3/4th the images and keep the original one 
+  '''
   if random.randint(1, 4) > 3:
       return img  
   # convert to numpy for opencv
@@ -91,32 +94,34 @@ def augment_img(img):
   img = transform(image=img)['image']  
   return Image.fromarray(img)
 
-train_text = TEXT_PATH 
-
 # --------------------------------------------------
-def load_jsonl():
+def load_jsonl(path):
+    '''
+    Function for data loading(labels), Where data saved in JSON Line format \n
+    In (image_name,text) pair And returns Datafreame 
+    '''
     return pd.read_json(
                         path_or_buf = train_text,
                         lines=True,
                         )
-print(train_text)
 
-
-
-"""### Show Random sample"""
-def ShowSingleSample(): 
+# --------------------------------------------------
+def ShowSingleSample():
+  '''
+  Function shows randomly selected sample(only one) 
+  '''
   idx = random.randint(0,len(df))
   print(df['text'][idx])
   print(df['file_name'][idx])
   Image.open(SOURCE_IMAGE_PATH + df['file_name'][idx]).convert("RGB")
 
-
-
-"""Let's run the above function on some samples"""
+# --------------------------------------------------
 def ShowRandomSample():
-  # take sample and do augmentations
+  '''
+  Let's run the augment_img function on some samples \n
+  Take sample randomly and do augmentations
+  '''
   sample_amount =  2 # 8
-  # to do choose randomly
   idx1 = random.randint(0,len(df))
   idx2 = random.randint(0,len(df))
   idx3 = random.randint(0,len(df))
@@ -156,25 +161,30 @@ def ShowRandomSample():
   plt.subplot(sample_amount, 2, i + 1).set_title('augmented image')
   plt.subplot(sample_amount, 2, i + 1).set_axis_off()
 
-
-"""## Create a new folder to store the augmented images and the labels file."""
-def mkdir1():    
+# --------------------------------------------------
+def mkdir_1():
+  '''
+  Create a new folder to store the augmented images and the labels file.
+  '''    
   aug_imgs = f'{WORKING_DIR}destination/aug_imgs'
   if not os.path.exists(aug_imgs):
       os.makedirs(aug_imgs)
 
-
-# This will be the last resulting dir after combine source with augmented (destenation)
-def mkdir2():
-  
+# --------------------------------------------------
+def mkdir_2():
+  '''
+  This will be the last resulting dir after combine source with augmented (destenation)
+  '''
   output_imgs_folder = f'{WORKING_DIR}output_dir'
   if not os.path.exists(output_imgs_folder):
       os.makedirs(output_imgs_folder)
 
-
-
+# --------------------------------------------------
 def dataAug():
-  """## Create a new dataframe to store the new file names and corresponding labels."""
+  '''
+  Create a new dataframe to store the new file names and corresponding labels.\n
+  sLoop through the data frame and call augment_img function at the end save returned results 
+  '''
 
   new_df = pd.DataFrame(columns=['file_name', 'text'])
   print(new_df)
@@ -206,36 +216,40 @@ def dataAug():
   print('\n',new_df.head())
 
 
-
 # output_dir = f'{WORKING_DIR}output_dir'
 # if not os.path.exists(output_dir):
 #     os.makedirs(output_dir)
 
-
-"""**2.1.1 - Morphological (dilate)**"""
-
+# --------------------------------------------------
 def augment_img_dilate(img):
-  img = np.asarray(img)     #convert to numpy
+  '''
+  Function for Morphological(dilate)
+  '''
+  img = np.asarray(img)    
   kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(2,1))
   # dilation because the image is not inverted
   img = cv2.erode(img, kernel, iterations=random.randint(2, 4))
   return Image.fromarray(img) 
 
-
-""" **2.1.2 - Morphological (erode) **"""
+# --------------------------------------------------
 def augment_img_erode(img):
+  '''
+  Function for Morphological (erode)
+  '''
   img = np.asarray(img)     
   kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(2,2))
   # erosion because the image is not inverted
   img = cv2.dilate(img, kernel,iterations=random.randint(1,1)) 
   return Image.fromarray(img)
 
-
-""" **2.2 - Black Pixel Noise** """
+# --------------------------------------------------
 def augment_img_RandomRain_black(img):
+  '''
+  Function for Black Pixel Noise, Where RandomRain used 
+  '''
   img = np.asarray(img)     
   transform = A.Compose([
-  #add black pixels noise: RandomRain
+  # add black pixels noise: RandomRain
   A.RandomRain( brightness_coefficient=.9, 
                 drop_length=1, drop_width=1, 
                 drop_color = (0, 0, 0), 
@@ -245,31 +259,37 @@ def augment_img_RandomRain_black(img):
   img = transform(image=img)['image']  
   return Image.fromarray(img)
 
-
+# --------------------------------------------------
 def augment_img_RandomShadow(img):
+  '''
+  Function for add black pixels noise: RandomShadow
+  '''
   img = np.asarray(img)     
   transform = A.Compose([
-  #add black pixels noise: RandomShadow
-  A.RandomShadow(p=1)
-  #A.PixelDropout(p=1),
-  ])
+                          A.RandomShadow(p=1)
+                          #A.PixelDropout(p=1),
+                        ])
   img = transform(image=img)['image']  
   return Image.fromarray(img) 
 
-
+# --------------------------------------------------
 def augment_img_PixelDropout_black(img):
+  '''
+  add black pixels noise: PixelDropout
+  '''
   img = np.asarray(img)    
   transform = A.Compose([
-  #add black pixels noise: PixelDropout
-  A.PixelDropout(p=1)
-  ])
+                          A.PixelDropout(p=1)
+                        ])
   img = transform(image=img)['image']  
   return Image.fromarray(img) 
 
-
-"""**2.3 - White Pixel Noise**"""
+# --------------------------------------------------
 def augment_img_RandomRain_white(img):
-  img = np.asarray(img)     #convert to numpy
+  '''
+  Function for White Pixel Noise
+  '''
+  img = np.asarray(img)     
   transform = A.Compose([
   #add white pixels noise: RandomRain
   A.RandomRain( brightness_coefficient=1.0, 
@@ -283,26 +303,28 @@ def augment_img_RandomRain_white(img):
   img = transform(image=img)['image']     
   return Image.fromarray(img)
 
-
-
+# --------------------------------------------------
 def augment_img_PixelDropout_white(img):
+  '''
+  Function for adding white pixels noise: PixelDropout
+  '''
   img = np.asarray(img)     
   transform = A.Compose([
-  # add white pixels noise: PixelDropout
-  A.PixelDropout(  dropout_prob=0.4,
-                   drop_value=250,p=1
-                )
-  ])
+                          A.PixelDropout(  dropout_prob=0.4,
+                                          drop_value=250,p=1,
+                                        )
+                        ])
   img = transform(image=img)['image']  
   return Image.fromarray(img)  
 
-
-"""**2.4 - Transformations**"""
+# --------------------------------------------------
 def augment_img_ShiftScaleRotate(img):
+  '''
+  Function for doing Transformations here we should be aware with parameters like rotation 
+  '''
   img = np.asarray(img)     
   transform = A.Compose([
-  # add white pixels noise: PixelDropout
-  A.OneOf([
+    A.OneOf([
             A.ShiftScaleRotate( shift_limit=0,
                                 scale_limit=0.2,
                                 rotate_limit=2,
@@ -333,8 +355,11 @@ def augment_img_ShiftScaleRotate(img):
   img = transform(image=img)['image']   
   return Image.fromarray(img)
 
-
+# --------------------------------------------------
 def augment_img_Blur(img):
+  '''
+  Function for Add Blur to image 
+  '''
   img = np.asarray(img)     
   transform = A.Compose([
                           A.Blur(blur_limit=3,p=1),
@@ -342,20 +367,20 @@ def augment_img_Blur(img):
   img = transform(image=img)['image']  
   return Image.fromarray(img)
 
-
-
-"""## Process Missing"""
+# --------------------------------------------------
 def processMissing():
-
+  '''
+  Function for Process Missing, After the data has  been augmented we do check if there is(are) missing images\n
+  So in this case we drop it from labels file (train.jsonl) 
+  '''
   path = f'{WORKING_DIR}output_dir/'
   def load_jsonl(path):
       return pd.read_json(
                           path_or_buf = f'{path}all_labels.jsonl',
                           lines=True) 
   df = load_jsonl(path)
-
-  # ---------------------------
-
+  
+ # ++++++++++++++++++++++++++++++++++++++++++++++
   def is_dir_exist(filename): 
       path = f'{WORKING_DIR}output_dir/'
       path_to_file = f'{path}imgs/'+ filename 
@@ -383,10 +408,12 @@ def processMissing():
       for line in reddit:
           f.write(json.dumps(line,ensure_ascii=False) + "\n")
 
-
-"""## images compression if needed """
+# --------------------------------------------------
 def compressImages():
-  # path to the directory you want to zip
+  '''
+  Function for images compression if needed \n
+  Path to the directory you want to zip
+  ''' 
   dir_path = f"{WORKING_DIR}output_dir/imgs/"
   # name of the zip file you want to create
   zip_filename = "images.zip"
@@ -401,35 +428,35 @@ def compressImages():
               # add the file to the zip file
               zip.write(file_path, os.path.relpath(file_path, dir_path))
 
-
+# --------------------------------------------------
 if __name__=='__main__':
-   
-   df = load_jsonl()
+
+   train_text= TEXT_PATH
+   df = load_jsonl(train_text)
    print(f'length of df : {len(df)} \n',df.head())
 
   #  ShowSingleSample()
 
   #  ShowRandomSample()
 
-   mkdir1()
-   mkdir2()
-   # to check how many images do we heve to be Aug.
+   mkdir_1()
+   mkdir_2()
+   # to check how many images do we heve to be Augmented.
    print(len(
               os.listdir(SOURCE_IMAGE_PATH)
             )
         )
-   if MANY_AUGMENTATION: 
+   if MANY_AUGMENTATION:
+    "1- Use mixed augumentation" 
     dataAug()
 
    else:
-
-      """ # 2- Functions to do 1 augmentation only
+      '''
+      2- Functions to do one augmentation only in each time 
       * In this way you can do one type of augumention at each time in spreate way
-
-      **2.1 Morphological Alterations**
-      """
+     '''
       # Read an image 
-      path = '/content/drive/MyDrive/TrsOCR_utorial/training-data-ex/img/' 
+      path = f'{SOURCE_IMAGE_PATH}' 
       image = Image.open(path + df['file_name'][0]).convert("RGB")
       print(image)
 
