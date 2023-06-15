@@ -21,7 +21,7 @@ source env/bin/activate
 Install the pypi package
 
 ```
-pip install trdg
+!pip install trdg
 ```
 ## Devloping the existing tool for new languge you need : 
 Afterwards, you can use `trdg` from the CLI. I recommend using a `virtualenv` instead of installing with `sudo`.
@@ -84,12 +84,17 @@ You can see the full class definition here:
 
 You get 100 randomly generated images with random text on them like:
 
-![1](samples/1.jpg "1")
-![2](samples/2.jpg "2")
-![3](samples/3.jpg "3")
-![4](samples/4.jpg "4")
-![5](samples/5.jpg "5")
-
+![1](samples/48.jpg "1")
+![2](samples/138.jpg "2")
+![3](samples/194.jpg "3")
+![4](samples/445.jpg "4")
+![5](samples/1283.jpg "5")
+![6](samples/1347.jpg "6")
+![7](samples/100006.jpg "7")
+![8](samples/100018.jpg "8")
+![9](samples/v7_2.jpg "9")
+![10](samples/words_dict_498.jpg "10")
+![11](samples/words_dict_239.jpg "11")
 By default, they will be generated to `out/` in the current working directory.
 
 
