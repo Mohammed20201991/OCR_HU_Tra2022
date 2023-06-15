@@ -44,11 +44,11 @@ Start data augmentation
 
 <h6 id="illusturation"> Procedure method for data augmentation(Self-made) </h6>
 
-![plot]()
+![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HTR_Aug/images/aug_procedure.png)
 
 <h6> Figure show Different Augmentation methods (Self-made) </h6>
 
-![plot]()
+![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HTR_Aug/images/aug.png)
 **<p id="references">References:</p>**
 <ul dir="auto">
 <li><a href="https://opencv.org/">OpenCV</a></li>
