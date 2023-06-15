@@ -95,8 +95,8 @@ You get 100 randomly generated images with random text on them like:
 ![9](samples/v7_2.jpg "9")
 ![10](samples/words_dict_498.jpg "10")
 ![11](samples/words_dict_239.jpg "11")
-By default, they will be generated to `out/` in the current working directory.
 
+By default, they will be generated to `out/` in the current working directory.
 
 ### Testing (using python)
 The command that used to prepare test image (ground truth) . <br>
@@ -106,8 +106,6 @@ To test uints :
 !cd TextRecognitionDataGeneratorHuMu23
 !python3 tests.py
 ```
-
-When using image background (3). A image from the images/ folder will be randomly selected and the text will be written on it.
 
 ### Handwritten
 
@@ -136,7 +134,7 @@ Simplified:
 ![31](samples/31.jpg "1")
 
 ## Add new fonts
-The list for added new fonts for both Hungarain and English could be found [Fonts list]()
+The list for added new fonts for both Hungarain and English could be found [Fonts list](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTRDG/doc/fonts_testing.pdf)
 The script picks a font at random from the *fonts* directory.
 
 | Directory | Languages |
@@ -156,7 +154,7 @@ If you want to add a new non-latin language, the amount of work is minimal.
 
 It only supports .ttf for now.
 ### For fonts testing:
-This test is important when you have new fonts to see if all alph ,letters and symbols are recognized well especialy for hungarain special char.
+This test is important when you have new fonts to see if all alph ,letters and symbols are recognized well especialy for Hungarian special char.
 got to [fonts_testing.py](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTRDG/trdg/fonts_testing.py)  script and run: 
 ```
 python3 fonts_testing.py
@@ -179,7 +177,7 @@ Number of images generated per second.
   - NVIDIA A100 Tensor Core GPU Provided by [National Hungarain Laboratory For Digital Heritage](https://dh-lab.hu/en/kezdolap-english/)
 
 ## Contributing
-If someone wanna add his/here contribution look what is left
+If someone wanna add his/her contribution look what is left
 1. Fine-tune [handwriting-generation models](https://github.com/Grzego/handwriting-generation) done by Grzego on Hungarain data.
 2. Create a pull request
 
@@ -200,12 +198,69 @@ This data is private upon request only for Academic research
 <li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/En_Brown_lines">En_Brown_lines</a></li>
 </ul>
 
+## Commands were used during data generation: 
+- hu_liness_v1
+
+`python3 run.py -i "texts/Out_split_1/split_1.txt"  -w 9 -t 8 -f 64 -l hu -c 500001  -na 2 --output_dir "out/lines/hu/" --font_dir fonts/hu/ -b 3 -al 0`
+
+- hu_lines_v3
+
+`python3 run.py -c 15 -l hu -w 8 -i texts/Out_split_1/split_24.txt --name_format 2 --output_dir "out/hu/lines/3/" -f 64 --thread_count 8 --font_dir fonts/hu/ -k 1 -rbl -al 1 -tc '#000000,#888888' -bl 1 -b 3 -d 3`
+
+- hu_lines_v4
+
+` python3 run.py -c ?? -l hu -w 8 -i texts/Out_split_1/split_16.txt --name_format 2 --output_dir "out/hu/lines/4/" -f 64 --thread_count 8 --font_dir fonts/hu/ -k 1 -rbl -al 1 -tc '#000000,#888888' -bl 1 -b 3 -d 3 `
+
+- hu_lines_v5
+
+` python3 run.py -c 50000 -l hu -w 8 -i texts/split_3.txt --name_format 2 --output_dir "out/testPrintedFonts/" -f 64 --thread_count 8 --font_dir fonts/hu_printed/ -d 2 -k 1 -rk -b 1
+`
+
+- hu_lines_v7
+
+`python3 run.py -c 100000 -l hu -w 8 -i texts/split_4.txt --name_format 2 --output_dir "out/v7/" -f 64 --thread_count 8 --font_dir fonts/hu_printed/ -b 3`
+
+- HungarainNmes
+
+`python3 run.py -c 4478 -l hu -i texts/Hungarain_NAMES.txt --name_format 2 --output_dir "out/hu/Names/" -f 64 --thread_count 8 --font_dir "fonts/hu/"`
+
+- words_hu_dict
+
+`python3 run.py -i "dicts/hu.txt"  -t 8 -f 64 -l hu -c 60345  -na 2 --output_dir "out/words/hu/" --font_dir fonts/hu/ -b 3 -al 0`
+
+- En_words_dict
+
+`python3 run.py -i "dicts/en.txt"  -t 8 -f 64 -l en -c 466479  -na 2 --output_dir "out/words/en/" --font_dir fonts/hu/ -b 3 -al 0`
+
+- En_brown_lines_v1
+
+`python3 run.py  -l en -c 19950  --name_format 2 -i "texts/Brown/split_1.txt" --output_dir "out/en/Brown/1/" -f 64 --thread_count 8  -k 1  -rk  -rbl -b -bl 1  -al 0 -cs 0  --font_dir fonts/en/`
+
+- En_brown_lines_v2
+
+`python3 run.py  -l en -c 18845  --name_format 2 -i "texts/Brown/split_2.txt" --output_dir "out/en/Brown/2/" -f 64 --thread_count 8  --font_dir fonts/en/`
+
+- En_brown_lines_v3
+
+`python3 run.py -c 19850 -l en -w 14 -i "texts/Brown/split_3.txt"  --name_format 2 --output_dir "brown_en_v3/images/" -f 64 --thread_count 8 --font_dir fonts/en/ -k 3 -d 1  -rk -rbl -bl 2 -al 0 -cs 0  -tc '#000000,#888888'`
+
+- En_brown_lines_v4
+
+`python3 run.py -c 19950  -l en -w 11 -i "texts/Brown/split_4.txt" --name_format 2 --output_dir "/brown_en_v4/images/" -f 64 --thread_count 8 --font_dir fonts/en/ -k 1 -d 2`
+
 ### Acknowledgment: 
-This work has been done using the infrastructure of the ELTE University Researcher, Under the supervision of (Gyöngyössy Natabara Máté)
+This work has been done using the infrastructure of the ELTE University Researcher, Under the supervision of:
+
+**Gyöngyössy Natabara Máté** , Email: natabara@inf.elte.hu
 
 ## References:
 <ul dir="auto">
 <li><a href="https://github.com/Belval/TextRecognitionDataGenerator">TextRecognitionDataGenerator</a></li>
 <li><a href="https://github.com/Grzego/handwriting-generation">Handwriting-Generation using Deep Learning methods</a></li>
 <li><a href="https://github.com/Mohammed20201991/TextRecognitionDataGeneratorHuMu23">Devloped Text Recognition Data Generator for Hungarain Languge</a></li>
+<li><a href="https://data.statmt.org/cc-100/">hu.txt.xz</a></li>
+<li><a href="http://www.sls.hawaii.edu/bley-vroman/brown_corpus.html">Brown Corpus</a></li>    
 </ul>
+
+## Contact
+Email: Mohamedabid092@gmail.com
