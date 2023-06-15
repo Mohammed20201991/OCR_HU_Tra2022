@@ -1,26 +1,40 @@
-# TextRecognitionDataGenerator [![CircleCI](https://circleci.com/gh/Belval/TextRecognitionDataGenerator/tree/master.svg?style=svg)](https://circleci.com/gh/Belval/TextRecognitionDataGenerator/tree/master) [![PyPI version](https://badge.fury.io/py/trdg.svg)](https://badge.fury.io/py/trdg) [![codecov](https://codecov.io/gh/Belval/TextRecognitionDataGenerator/branch/master/graph/badge.svg)](https://codecov.io/gh/Belval/TextRecognitionDataGenerator) [![Documentation Status](https://readthedocs.org/projects/textrecognitiondatagenerator/badge/?version=latest)](https://textrecognitiondatagenerator.readthedocs.io/en/latest/?badge=latest)
+# Devloped Text Recognition Data Generator toolkit 
 
-A synthetic data generator for text recognition
+A synthetic data generator for text recognition task modfied for Hungarain languge by adding new fonts that support Hungarain special characters 
 
 ## What is it for?
 
-Generating text image samples to train an OCR software. Now supporting non-latin text! For a more thorough tutorial see [the official documentation](https://textrecognitiondatagenerator.readthedocs.io/en/latest/index.html).
+Generating text image samples to train an HTR and/or OCR software. Here you can find a nice [the official documentation](https://textrecognitiondatagenerator.readthedocs.io/en/latest/index.html).
 
-## What do I need to make it work?
-
+## How to use it ?
+Make new virtual environment using `python` 
+```
+!pip install virtualenv
+!mkdir HuTRDG
+!cd HuTRDG
+!python3.8 -m venv env
+```
+Active Virtual Environment 
+`
+source env/bin/activate
+`
 Install the pypi package
 
 ```
 pip install trdg
 ```
-
-Afterwards, you can use `trdg` from the CLI. I recommend using a virtualenv instead of installing with `sudo`.
+## Devloping the existing tool for new languge you need : 
+Afterwards, you can use `trdg` from the CLI. I recommend using a `virtualenv` instead of installing with `sudo`.
 
 If you want to add another language, you can clone the repository instead. Simply run `pip install -r requirements.txt`
+```
+!git clone https://github.com/Mohammed20201991/OCR_HU_Tra2022.git
+!cd HuTRDG
+```
 
-## Docker image
+## Docker Image
 
-If you would rather not have to install anything to use TextRecognitionDataGenerator, you can pull the docker image.
+If you would rather not have to install anything to use TextRecognitionDataGenerator, you can pull the docker image. Done by `Belval`
 
 ```
 docker pull belval/trdg:latest
@@ -29,21 +43,6 @@ docker run -v /output/path/:/app/out/ -t belval/trdg:latest trdg [args]
 ```
 
 The path (`/output/path/`) must be absolute.
-
-## New
-- Add `--stroke_width` argument to set the width of the text stroke (Thank you [@SunHaozhe](https://github.com/SunHaozhe))
-- Add `--stroke_fill` argument to set the color of the text contour if stroke > 0 (Thank you [@SunHaozhe](https://github.com/SunHaozhe))
-- Add `--word_split` argument to split on word instead of per-character. This is useful for ligature-based languages
-- Add `--dict` argument to specify a custom dictionary (Thank you [@luh0907](https://github.com/luh0907))
-- Add `--font_dir` argument to specify the fonts to use
-- Add `--output_mask` to output character-level mask for each image
-- Add `--character_spacing` to control space between characters (in pixels)
-- Add python module
-- Add `--font` to use only one font for all the generated images (Thank you [@JulienCoutault](https://github.com/JulienCoutault)!)
-- Add `--fit` and `--margins` for finer layout control
-- Change the text orientation using the `-or` parameter
-- Specify text color range using `-tc '#000000,#FFFFFF'`, please note that the quotes are **necessary**
-- Add support for Simplified and Traditional Chinese
 
 ## How does it work?
 
@@ -79,11 +78,11 @@ You can see the full class definition here:
 - [`GeneratorFromStrings`](trdg/generators/from_strings.py)
 - [`GeneratorFromWikipedia`](trdg/generators/from_wikipedia.py)
 
-### Basic (CLI)
+### Using (CLI)
 
-`trdg -c 1000 -w 5 -f 64`
+`trdg -c 100 -w 5 -f 64`
 
-You get 1,000 randomly generated images with random text on them like:
+You get 100 randomly generated images with random text on them like:
 
 ![1](samples/1.jpg "1")
 ![2](samples/2.jpg "2")
@@ -99,57 +98,15 @@ The command that used to prepare test image (ground truth) . <br>
 `python3 run.py -c 1  -w 11 -i texts/hu_test.txt --name_format 0  --output_dir "out3/" -f 64 --thread_count 8 --font_dir fonts/hu_test/ `
 To test uints :
 ```
-cd TextRecognitionDataGeneratorHuMu23
-python3 tests.py
+!cd TextRecognitionDataGeneratorHuMu23
+!python3 tests.py
 ```
-### Text skewing
-
-What if you want random skewing? Add `-k` and `-rk` (`trdg -c 1000 -w 5 -f 64 -k 5 -rk`)
-
-![6](samples/6.jpg "6")
-![7](samples/7.jpg "7")
-![8](samples/8.jpg "8")
-![9](samples/9.jpg "9")
-![10](samples/10.jpg "10")
-
-### Text distortion
-You can also add distorsion to the generated text with `-d` and `-do`
-
-![23](samples/24.jpg "0")
-![24](samples/25.jpg "1")
-![25](samples/26.jpg "2")
-
-### Text blurring
-
-But scanned document usually aren't that clear are they? Add `-bl` and `-rbl` to get gaussian blur on the generated image with user-defined radius (here 0, 1, 2, 4):
-
-![11](samples/11.jpg "0")
-![12](samples/12.jpg "1")
-![13](samples/13.jpg "2")
-![14](samples/14.jpg "4")
-
-### Background
-
-Maybe you want another background? Add `-b` to define one of the three available backgrounds: gaussian noise (0), plain white (1), quasicrystal (2) or image (3).
-
-![15](samples/15.jpg "0")
-![16](samples/16.jpg "1")
-![17](samples/17.jpg "2")
-![23](samples/23.jpg "3")
 
 When using image background (3). A image from the images/ folder will be randomly selected and the text will be written on it.
 
 ### Handwritten
 
-Or maybe you are working on an OCR for handwritten text? Add `-hw`! (Experimental)
-
-![18](samples/18.jpg "0")
-![19](samples/19.jpg "1")
-![20](samples/20.jpg "2")
-![21](samples/21.jpg "3")
-![22](samples/22.jpg "4")
-
-It uses a Tensorflow model trained using [this excellent project](https://github.com/Grzego/handwriting-generation) by Grzego.
+Our task is handwritten for Hungarain Languge maybe you are working on an OCR for handwritten text? Add `-hw`! (Experimental). And I leave this step for futuer the models [this excellent project](https://github.com/Grzego/handwriting-generation) by Grzego was developed by a Tensorflow model trained using English data soe for Hungarain we need to train it on Hungarain texts.
 
 **The project does not require TensorFlow to run if you aren't using this feature**
 
@@ -157,9 +114,9 @@ It uses a Tensorflow model trained using [this excellent project](https://github
 
 The text is chosen at random in a dictionary file (that can be found in the *dicts* folder) and drawn on a white background made with Gaussian noise. The resulting image is saved as [text]\_[index].jpg
 
-There are a lot of parameters that you can tune to get the results you want, therefore I recommend checking out `trdg -h` for more information.
+There are a lot of parameters that you can tune to get the results you want, therefore checking out `trdg -h` for more information.
 
-## Create images with Hungarain  text
+## Create images with Hungarain text
 
 It is simple! Just do `trdg -l hu -c 1000 -w 5`!
 
@@ -173,41 +130,14 @@ Simplified:
 
 ![31](samples/31.jpg "1")
 
-## Create images with Chinese text
-
-It is simple! Just do `trdg -l cn -c 1000 -w 5`!
-
-Generated texts come both in simplified and traditional Chinese scripts.
-
-Traditional:
-
-![27](samples/27.jpg "0")
-
-Simplified:
-
-![28](samples/28.jpg "1")
-
-## Create images with Japanese text 
-
-It is simple! Just do `trdg -l ja -c 1000 -w 5`!
-
-Output 
-
-![29](samples/29.jpg "2")
-
-
 ## Add new fonts
-
+The list for added new fonts for both Hungarain and English could be found [Fonts list]()
 The script picks a font at random from the *fonts* directory.
 
 | Directory | Languages |
-|:----|:-----|
+|:-----|:-----|
 | fonts/latin | English, French, Spanish, German |
-| fonts/cn | Chinese |
-| fonts/ko | Korean |
-| fonts/ja | Japanese |
-| fonts/th | Thai |
-| fonts/hu | Hungarian |
+| fonts/hu    | Hungarian |
 
 Simply add/remove fonts until you get the desired output.
 
@@ -220,6 +150,12 @@ If you want to add a new non-latin language, the amount of work is minimal.
 5. Run the tool as you normally would but add `-l` with your two-letters code
 
 It only supports .ttf for now.
+### For fonts testing:
+This test is important when you have new fonts to see if all alph ,letters and symbols are recognized well especialy for hungarain special char.
+got to [fonts_testing.py](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTRDG/trdg/fonts_testing.py)  script and run: 
+```
+python3 fonts_testing.py
+```
 
 ## Benchmarks
 
@@ -235,18 +171,35 @@ Number of images generated per second.
     - `-t 2` : 1045 img/s
     - `-t 4` : 2107 img/s
     - `-t 8` : 3297 img/s
+  - NVIDIA A100 Tensor Core GPU Provided by [National Hungarain Laboratory For Digital Heritage](https://dh-lab.hu/en/kezdolap-english/)
 
 ## Contributing
+If someone wanna add his/here contribution look what is left
+1. Fine-tune [handwriting-generation models](https://github.com/Grzego/handwriting-generation) done by Grzego on Hungarain data.
+2. Create a pull request
 
-1. Create an issue describing the feature you'll be working on
-2. Code said feature
-3. Create a pull request
+## Generated data:
+This data is private upon request only for Academic research 
+<ul dir="auto">
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v1_1">lines_hu_v1_1</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v2">lines_hu_v2</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v2_1">lines_hu_v2_1</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v3">lines_hu_v3</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v4">lines_hu_v4</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v5">lines_hu_v5</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v6">lines_hu_v6</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/lines_hu_v7">lines_hu_v7</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/HungarianNames">HungarianNames</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/words_hu_dict">words_hu_dict</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/En_Words_Dict">En_Words_Dict</a></li>
+<li><a href="https://huggingface.co/datasets/AlhitawiMohammed22/En_Brown_lines">En_Brown_lines</a></li>
+</ul>
+## Acknowledgment: 
+This work has been done using the infrastructure of the ELTE University Researcher, Under the supervision of (Gyöngyössy Natabara Máté)
 
-## Feature request & issues
-
-If anything is missing, unclear, or simply not working, open an issue on the repository.
-
-## What is left to do?
-- Better background generation
-- Better handwritten text generation
-- More customization parameters (mostly regarding background)
+## References:
+<ul dir="auto">
+<li><a href="https://github.com/Belval/TextRecognitionDataGenerator">TextRecognitionDataGenerator</a></li>
+<li><a href="https://github.com/Grzego/handwriting-generation">Handwriting-Generation using Deep Learning methods</a></li>
+<li><a href="https://github.com/Mohammed20201991/TextRecognitionDataGeneratorHuMu23">Devloped Text Recognition Data Generator for Hungarain Languge</a></li>
+</ul>
