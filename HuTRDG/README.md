@@ -174,7 +174,7 @@ Number of images generated per second.
     - `-t 2` : 1045 img/s
     - `-t 4` : 2107 img/s
     - `-t 8` : 3297 img/s
-  - NVIDIA A100 Tensor Core GPU Provided by [National Hungarain Laboratory For Digital Heritage](https://dh-lab.hu/en/kezdolap-english/)
+- NVIDIA A100 Tensor Core GPU Provided by [National Hungarain Laboratory For Digital Heritage](https://dh-lab.hu/en/kezdolap-english/)
 
 ## Contributing
 If someone wanna add his/her contribution look what is left
