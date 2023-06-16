@@ -258,7 +258,7 @@ This work has been done using the infrastructure of the ELTE University Research
 <li><a href="https://github.com/Belval/TextRecognitionDataGenerator">TextRecognitionDataGenerator</a></li>
 <li><a href="https://github.com/Grzego/handwriting-generation">Handwriting-Generation using Deep Learning methods</a></li>
 <li><a href="https://github.com/Mohammed20201991/TextRecognitionDataGeneratorHuMu23">Devloped Text Recognition Data Generator for Hungarain Languge</a></li>
-<li><a href="https://data.statmt.org/cc-100/">hu.txt.xz</a></li>
+<li><a href="https://data.statmt.org/cc-100/">Hungarain Corpus(hu.txt.xz)</a></li>
 <li><a href="http://www.sls.hawaii.edu/bley-vroman/brown_corpus.html">Brown Corpus</a></li>    
 </ul>
 
