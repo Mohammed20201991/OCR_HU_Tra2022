@@ -1,5 +1,5 @@
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '5' 
+# import os
+# os.environ['CUDA_VISIBLE_DEVICES'] = '5' 
 import numpy as np
 import pandas as pd 
 import torch ,evaluate ,argparse, logging 
@@ -72,18 +72,18 @@ parser.add_argument("--debug", type=bool, default=False)
 parser.add_argument("--report_to", type=list, default=["tensorboard"]) 
 parser.add_argument("--resume_from_checkpoint", type=bool or str, default=False)
 parser.add_argument("--gradient_checkpointing", type= bool, default= False)
-parser.add_argument("--full_train", type= bool, default = True )
+parser.add_argument("--full_train", type= bool, default = True)
 parser.add_argument("--nlp_model_dir", type=str, default='NYTK/PULI-BERT-Large')
 parser.add_argument("--vision_model_dir", type=str, default='facebook/deit-base-distilled-patch16-384')   
 parser.add_argument("--processor_dir", type=str, default='microsoft/trocr-base-handwritten')
 parser.add_argument("--ft_model_id", type=str, default='microsoft/trocr-large-handwritten')
-
+parser.add_argument("--leveraging", type= bool, default = False)
 # Model Configuration 
 parser.add_argument("--num_beams", type=int, default= 4 ) 
 parser.add_argument("--max_length", type=int, default= 128)
 parser.add_argument("--early_stopping", type= bool, default= True ) 
 # OCR_HU_Tra2022 Container environment 
-parser.add_argument("--working_dir", type=str, default='Models/PULI-BERT_Deit/')
+parser.add_argument("--working_dir", type=str, default='Models/TrOCR_large_handwritten/')
 parser.add_argument("--n_gpus", type=str, default = '8')
 if train_notebook :
     args = parser.parse_args()
@@ -165,7 +165,13 @@ def load_jsonl():
                          lines=True
                         )
 def main():
+    '''
+    The main function do mosrt of the things first of all dataset loading, And then choose appropriate sequence length \n
+    based on selecting the index of maximum text length and dataframe labels and tokenize it and choose the length an approximately. 
+    The second thing is to use class for loading to data trainer class and spilt it .\n
+    Setup Model Configuration
     
+    '''
     logger.info("***** Arguments *****")    
     logger.info(''.join(f'{k}={v}\n' for k, v in vars(args).items()))
 
@@ -215,8 +221,8 @@ def main():
     Here if we are using Languge Model(LM) to be fine-tune 
     it needs some special setup. 
     '''
-    if args.nlp_model_dir == 'NYTK/PULI-BERT-Large':
-        model.config.pad_token = '[PAD]' 
+    if args.leveraging and args.nlp_model_dir == 'NYTK/PULI-BERT-Large':
+        model.config.pad_token = '[PAD]'
     # Make sure vocab size is set correctly
     model.config.vocab_size = model.config.decoder.vocab_size
 
@@ -313,13 +319,16 @@ def main():
 
 
 if __name__ == "__main__":
+    '''
+    Load model,processor and tokenizer 
+    '''
 
     print(args)    
     n_gpus = torch.cuda.device_count()
     print('n_gpus', n_gpus)
     
     processor = TrOCRProcessor.from_pretrained(args.processor_dir)
-    if args.full_train:
+    if args.full_train and args.leveraging:
         model = VisionEncoderDecoderModel.from_encoder_decoder_pretrained(args.vision_model_dir, args.nlp_model_dir)
         processor.tokenizer = AutoTokenizer.from_pretrained(args.nlp_model_dir)   
     else:
