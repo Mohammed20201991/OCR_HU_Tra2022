@@ -343,11 +343,10 @@ python3 test.py
 
 
 ## An Inference Example
-Please see details in [pic_inference.py](https://github.com/microsoft/unilm/blob/master/trocr/pic_inference.py).
+Please see details in [pic_inference.py](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/infrence.py).Or you can see [![Open it in  Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zeI9cK070UnMQkbZC-D1EHPJPml3ChZ0?usp=sharing)
 
 **<p id="Demo"> Demo </p>** 
 
-## Citation
 
 
 ## License
