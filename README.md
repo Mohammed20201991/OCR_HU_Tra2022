@@ -346,7 +346,7 @@ python3 test.py
 Please see details in [pic_inference.py](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/infrence.py).Or you can see [![Open it in  Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zeI9cK070UnMQkbZC-D1EHPJPml3ChZ0?usp=sharing)
 
 **<p id="Demo"> Demo </p>** 
-
+See Image2Text [![Open it in  Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YzpWIEj0oscoP-1AVih7aospqOEO9J4f?usp=sharing)
 
 
 ## License
