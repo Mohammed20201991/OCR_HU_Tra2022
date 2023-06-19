@@ -1,5 +1,3 @@
-# import os
-# os.environ['CUDA_VISIBLE_DEVICES'] = '5' 
 import numpy as np
 import pandas as pd 
 import torch ,evaluate ,argparse, logging 
@@ -89,6 +87,9 @@ if train_notebook :
     args = parser.parse_args()
 
 def compute_metrics(pred):
+    '''
+    Evaluation Metrics to be calculate in %
+    '''
     labels_ids = pred.label_ids
     pred_ids   = pred.predictions
 
@@ -103,16 +104,33 @@ def compute_metrics(pred):
     return {"cer": cer, "wer": wer}
 
 class OCRDataset(Dataset):
-    def __init__(self, root_dir, df, processor, max_target_length= args.max_length): 
+    '''
+    In this class OCRDataset return for each element of the json line row dataset:
+    pixel_values(features), which serve as input to the model.
+    target, which are the input_ids of the corresponding text in the image.
+    The processor type is TrOCRProcessor to prepare the data for the model. \n
+    TrOCRProcessor is actually just a wrapper around a ViTFeatureExtractor (which can be used to resize + normalize images).\n
+    And a RobertaTokenizer (which can be used to encode and decode text into/from input_ids).
+    '''
+    def __init__(self, root_dir, df, processor, max_target_length= args.max_length):
+        '''
+        Pass the necessary arguments 
+        ''' 
         self.root_dir = root_dir
         self.df = df
         self.processor = processor
         self.max_target_length = max_target_length
 
     def __len__(self):
+        '''
+        Get the length for the dataframe
+        '''
         return len(self.df)
 
     def __getitem__(self, idx):
+        '''
+        Get one elemnt by index at each time step and process it.
+        '''
         # get file name + text 
         file_name = self.df['file_name'][idx]
         text = self.df['text'][idx]
@@ -159,7 +177,10 @@ def create_datasets(df: pd.DataFrame):
                                )
     return train_dataset, eval_dataset, train_df
 
-def load_jsonl():   
+def load_jsonl(): 
+    '''
+    This function recive the passed path by args path in jsonline format and return pandas dataframe.
+    '''  
     return pd.read_json(
                          path_or_buf = args.text_path, 
                          lines=True
@@ -170,7 +191,6 @@ def main():
     based on selecting the index of maximum text length and dataframe labels and tokenize it and choose the length an approximately. 
     The second thing is to use class for loading to data trainer class and spilt it .\n
     Setup Model Configuration
-    
     '''
     logger.info("***** Arguments *****")    
     logger.info(''.join(f'{k}={v}\n' for k, v in vars(args).items()))
@@ -219,7 +239,7 @@ def main():
     model.config.pad_token_id = processor.tokenizer.pad_token_id # 0 In case PULI
     '''
     Here if we are using Languge Model(LM) to be fine-tune 
-    it needs some special setup. 
+    it needs some special setup for (PULI-Bert large) for using other models it might need via setup. 
     '''
     if args.leveraging and args.nlp_model_dir == 'NYTK/PULI-BERT-Large':
         model.config.pad_token = '[PAD]'
@@ -311,7 +331,7 @@ def main():
     train_result = trainer.state.log_history[-1]
     print(train_result)
 
-    # Running the Evaluation 
+    # Running the Evaluation After training has been finshed
     model.eval()
     with torch.no_grad():
         eval_result = trainer.evaluate(eval_dataset, max_length = args.max_length) 
