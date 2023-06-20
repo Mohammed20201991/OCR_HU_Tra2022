@@ -1,4 +1,4 @@
-# TrOCR_HU_2022
+# TrOCR_HU_2022  [![Give me Image take Text]](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/images/Syndbad.PNG)
 <ul dir="auto">
 <li><a href="#Introduction">Introduction</a></li>
 <li><a href="#illusturation">illusturation</a></li>
