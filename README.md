@@ -415,10 +415,8 @@ novel technologies, as intended, are utilized </li>
     
   <li> Use TrOCR model in Parallel with <a href="https://huggingface.co/NYTK/PULI-GPT-2"> PULI-GPT-2 </a> see the draft notebook 
   <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/tree/main/HTR_Aug">HTR_Aug. </a>  
-    
-    [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ZNxbJddY6BrRSO41aZxAYu3ad1NPUKv0?usp=sharing)
   </li>
-    
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ZNxbJddY6BrRSO41aZxAYu3ad1NPUKv0?usp=sharing) 
   <li> Generate more variations of synthetic data or collect more human-annotated data </li>
 </ol>
 </ul>
