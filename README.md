@@ -286,7 +286,7 @@ python3 test.py
 --max_length=96
 ~~~
 
-<h3 id="LeaveargingDeitRoberta-baseFine-tune">Fine-tune the DH-Lab dataset on the pre-trained Synthetic checkpoint (lines_hu_v2_1) second-stage</h3>
+<h3 id="LeaveargingDeitRoberta-baseFine-tune">Fine-tune the DH-Lab dataset on the pre-trained Synthetic checkpoint (lines_hu_v2_1) second-stage </h3>
 
 `export CUDA_VISIBLE_DEVICES=3`
 
@@ -405,14 +405,16 @@ Email: Mohamedabid09@gmail.com
 <ul>
   <li>The thesis includes results from months-long GPU-optimal runs, where the   most 
 novel technologies, as intended, are utilized </li>
-  <li> Addressing Double start token in many international Models <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/AddressingDoubleStartTokenIssue.ipynb"> see notebook</a></li>
-  <li> Generate more than two million <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/tree/main/HuTRDG"> synthetic datasets </a> for the Hungarian Language </li>
+  <li> Addressing Double start token in many international models <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/AddressingDoubleStartTokenIssue.ipynb"> see notebook</a></li>
+  <li> Generate more than two million <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/tree/main/HuTRDG"> synthetic datasets </a> for the Hungarian language </li>
   <li> The results overcome the state-of-the-Art TrOCR Model for Hungarian handwriting recognition. </li>
   <li> Leveraging new state-of-the-art vision-language models in OCR architecture </li>
-  <li>What else is left? for future work </li>
+  <li> What else is left? for future work and it is open for contribution  </li>
   <ol>
   <li> Replace the GPT-2 Hungarian based in TrOCR architecture </li>
-  <li> Use TrOCR model in Parallel with <a href="https://huggingface.co/NYTK/PULI-GPT-2"> PULI-GPT-2 </a> </li>
+  <li> Use TrOCR model in Parallel with <a href="https://huggingface.co/NYTK/PULI-GPT-2"> PULI-GPT-2 </a> see the draft notebook 
+  <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/tree/main/HTR_Aug">HTR_Aug. </a> [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ZNxbJddY6BrRSO41aZxAYu3ad1NPUKv0?usp=sharing)
+  </li>
   <li> Generate more variations of synthetic data or collect more human-annotated data </li>
 </ol>
 </ul>
