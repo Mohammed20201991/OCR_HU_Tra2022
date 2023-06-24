@@ -37,7 +37,7 @@
 The project has been done for **Enhancing State-of-the-Art Language Models for Hungarian Handwritten Text Recognition**. By leveraging the Transformer architecture for both visual models (CV) for image understanding and language models (LM) for wordpiece-level text generation and its end-to-end architecture. The baseline model is TrOCR.
 
 **<p id="illusturation"> illusturation </p>**
-### Sample for Leavearging vision(CV) with Languge Model(LMs) (self-Edited) source <a href="https://arxiv.org/abs/1810.04805">BERT</a> & <a href ="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">GPT-2</a> Models. 
+### Sample for Leavearging vision(CV) with Languge Model(LMs) (self-Edited) source <a href="https://arxiv.org/abs/2012.12877">Deit</a>, <a href="https://arxiv.org/abs/1810.04805">BERT</a> & <a href ="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">GPT-2</a> Models. 
 ![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/images/illustration%20for%20%20%20Hungarain%20Transformer.PNG)
 **<p id="OCR_Pipeline">OCR Pipeline (Self-Made)</p>**
 ![plot](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/images/OCR_pipline.png)
@@ -50,7 +50,7 @@ The data we used contains Humman data that was collected and synthetic data that
 
 ## 1- Humman data (DH-Lab)
 The baseline models are trained with a proprietary dataset. The dataset is private data that contains images (in jpg format). These images have been segmented by lines and annotated with the corresponding text in the text file. The annotations contain the image name,
-the status whether is it ok or not, and many other meta parameters(they are not important in our task), and the last will contains the text for this image (features) separating each word by (|) characters, the (+) sign is used to concatenate the next line with the current sentence. As shown below.
+the status, whether is okay or not, and many other meta parameters (they are not important in our task), and the last will contain the text for this image (features) separating each word by (|) characters, the (+) sign is used to concatenate the next line with the current sentence. As shown below.
 
 <p>Sampling image:</p>
 <img src="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/images/RALK987_1865_817_121_001-031.jpg" alt="alt" border-radius: 8px>
