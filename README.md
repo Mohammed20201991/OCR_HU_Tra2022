@@ -389,6 +389,8 @@ Please see details in [pic_inference.py](https://github.com/Mohammed20201991/OCR
 See <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/JupLab/Image2text_OCR.ipynb">Image2Text Script</a> or [![Open I2T Pipeline in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YzpWIEj0oscoP-1AVih7aospqOEO9J4f?usp=sharing)
 For OCR_live_demo using Gradio, see: [![Open in  Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1LoGv2cPoJrLZQcHT_yds_pcKqBznGXuW?usp=sharing)
 
+Video could be found here : <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/Videos/OCR_HU_Tra2022_%20HTR%20Transformer%20for%20Hungarian%20Language%20-%2024%20June%202023.mp4"> <img src="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTrOCR/images/free-video-icon-818-thumb.png" width="50" height="40" /> </a>
+
 ## License
 - The source code is free.
 - The dataset is not allowed to be used as it is private data and was given only for academic research.
