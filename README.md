@@ -396,7 +396,8 @@ Video could be found here : <a href="https://github.com/Mohammed20201991/OCR_HU_
 - The dataset is not allowed to be used as it is private data and was given only for academic research.
 
 ### Contact Information
-Email: Mohamedabid092@gmail.com
+Author: `Mohammed A.S. Al-Hitawi`
+Email: Mohamedabid092@gmail.com , P622VN@inf.elte.hu, al_hitawe@uofallujah.edu.iq
 
 <h3 id="Acknowledgement"> Acknowledgement </h3>
 
