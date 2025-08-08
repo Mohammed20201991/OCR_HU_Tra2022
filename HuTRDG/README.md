@@ -264,4 +264,5 @@ This work has been done using the infrastructure of the ELTE University Research
 </ul>
 
 ## Contact
-Email: Mohamedabid092@gmail.com
+Author: Mohammed A.S. Al-Hitawi<br>
+Email: Mohamedabid092@gmail.com, P622VN@inf.elte.hu, al_hitawe@uofallujah.edu.iq
