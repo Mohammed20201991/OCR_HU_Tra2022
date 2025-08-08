@@ -1,13 +1,13 @@
-# Devloped Handwritten Text Recognition Data Generator toolkit 
+# HuHTR-Toolkit – Generate, Augment, and Train for Hungarian Handwritten Text Recognition
 
-A synthetic data generator for text recognition task modfied for Hungarain languge by adding new fonts that support Hungarain special characters 
+A synthetic data generator for the text recognition task modified for the Hungarian language by adding new fonts that support Hungarian special characters. A Scalable Framework for Generating and Augmenting Hungarian Handwritten Text Recognition Datasets 
 
 ## What is it for?
 
-Generating text image samples to train an HTR and/or OCR software. Here you can find a nice [the official documentation](https://textrecognitiondatagenerator.readthedocs.io/en/latest/index.html).
+Generating text image samples to train an HTR and/or OCR software. Here, you can find the official documentation: [https://textrecognitiondatagenerator.readthedocs.io/en/latest/index.html](https://textrecognitiondatagenerator.readthedocs.io/en/latest/index.html).
 
-## How to use it ?
-Make new virtual environment using `python` 
+## How to use it?
+Make a new virtual environment using `python` 
 ```
 !pip install virtualenv
 !mkdir HuTRDG
@@ -23,7 +23,7 @@ Install the pypi package
 ```
 !pip install trdg
 ```
-## Devloping the existing tool for new languge you need : 
+## Developing the existing tool for a  new language you need : 
 Afterwards, you can use `trdg` from the CLI. I recommend using a `virtualenv` instead of installing with `sudo`.
 
 If you want to add another language, you can clone the repository instead. Simply run `pip install -r requirements.txt`
@@ -34,7 +34,7 @@ If you want to add another language, you can clone the repository instead. Simpl
 
 ## Docker Image
 
-If you would rather not have to install anything to use TextRecognitionDataGenerator, you can pull the docker image. Done by `Belval`
+If you would rather not have to install anything to use TextRecognitionDataGenerator, you can pull the Docker image. Done by `Belval`
 
 ```
 docker pull belval/trdg:latest
@@ -50,9 +50,10 @@ Words will be randomly chosen from a dictionary of a specific language. Then an 
 
 ### Basic (Python module)
 
-The usage as a Python module is very similar to the CLI, but it is more flexible if you want to include it directly in your training pipeline, and will consume less space and memory. There are 4 generators that can be used.
+The usage as a Python module is very similar to the CLI, but it is more flexible if you want to include it directly in your training pipeline, and will consume less space and memory. 4 generators can be used.
 
-```py
+```
+py
 from trdg.generators import (
     GeneratorFromDict,
     GeneratorFromRandom,
@@ -82,7 +83,7 @@ You can see the full class definition here:
 
 `trdg -c 100 -w 5 -f 64`
 
-You get 100 randomly generated images with random text on them like:
+You get 100 randomly generated images with random text on them, like:
 
 ![1](samples/48.jpg "1")
 ![2](samples/138.jpg "2")
@@ -98,8 +99,8 @@ You get 100 randomly generated images with random text on them like:
 
 By default, they will be generated to `out/` in the current working directory.
 
-### Testing (using python)
-The command that used to prepare test image (ground truth) . <br>
+### Testing (using Python)
+The command used to prepare the test image (ground truth). <br>
 `python3 run.py -c 1  -w 11 -i texts/hu_test.txt --name_format 0  --output_dir "out3/" -f 64 --thread_count 8 --font_dir fonts/hu_test/ `
 To test uints :
 ```
@@ -109,7 +110,7 @@ To test uints :
 
 ### Handwritten
 
-Our task is handwritten for Hungarain Languge maybe you are working on an OCR for handwritten text? Add `-hw`! (Experimental). And I leave this step for futuer the models [this excellent project](https://github.com/Grzego/handwriting-generation) by Grzego was developed by a Tensorflow model trained using English data soe for Hungarain we need to train it on Hungarain texts.
+Our task is handwritten in the Hungarian Language. Maybe you are working on an OCR for handwritten text? Add `-hw`! (Experimental). And I leave this step for future models [this excellent project](https://github.com/Grzego/handwriting-generation) by Grzego was developed by a Tensorflow model trained using English data, so for Hungarian ,we need to train it on Hungarian texts.
 
 **The project does not require TensorFlow to run if you aren't using this feature**
 
@@ -117,13 +118,13 @@ Our task is handwritten for Hungarain Languge maybe you are working on an OCR fo
 
 The text is chosen at random in a dictionary file (that can be found in the *dicts* folder) and drawn on a white background made with Gaussian noise. The resulting image is saved as [text]\_[index].jpg
 
-There are a lot of parameters that you can tune to get the results you want, therefore checking out `trdg -h` for more information.
+There are a lot of parameters that you can tune to get the results you want; therefore, checking out `trdg -h` for more information.
 
-## Create images with Hungarain text
+## Create images with Hungarian text
 
 It is simple! Just do `trdg -l hu -c 1000 -w 5`!
 
-Generated texts come both in simplified and traditional Hungarain scripts.
+Generated texts come both in simplified and traditional Hungarian scripts.
 
 Traditional:
 
@@ -134,7 +135,7 @@ Simplified:
 ![31](samples/31.jpg "1")
 
 ## Add new fonts
-The list for added new fonts for both Hungarain and English could be found [Fonts list](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTRDG/doc/fonts_testing.pdf)
+The list for added new fonts for both Hungarian and English could be found [Fonts list](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTRDG/doc/fonts_testing.pdf)
 The script picks a font at random from the *fonts* directory.
 
 | Directory | Languages |
@@ -144,17 +145,17 @@ The script picks a font at random from the *fonts* directory.
 
 Simply add/remove fonts until you get the desired output.
 
-If you want to add a new non-latin language, the amount of work is minimal.
+If you want to add a new non-Latin language, the amount of work is minimal.
 
-1. Create a new folder with your language [two-letters code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+1. Create a new folder with your language [two-letter code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
 2. Add a .ttf font in it
 3. Edit `run.py` to add an if statement in `load_fonts()`
-4. Add a text file in `dicts` with the same two-letters code
-5. Run the tool as you normally would but add `-l` with your two-letters code
+4. Add a text file in `dicts` with the same two-letter code
+5. Run the tool as you normally would, but add `-l` with your two-letter code
 
 It only supports .ttf for now.
 ### For fonts testing:
-This test is important when you have new fonts to see if all alph ,letters and symbols are recognized well especialy for Hungarian special char.
+This test is important when you have new fonts to see if all athe lphabets, letters, and symbols are recognized well, especially for Hungarian special characters.
 got to [fonts_testing.py](https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/HuTRDG/trdg/fonts_testing.py)  script and run: 
 ```
 python3 fonts_testing.py
@@ -177,7 +178,7 @@ Number of images generated per second.
 - NVIDIA A100 Tensor Core GPU Provided by [National Hungarain Laboratory For Digital Heritage](https://dh-lab.hu/en/kezdolap-english/)
 
 ## Contributing
-If someone wanna add his/her contribution look what is left
+If someone wanna add his/her contribution, look at  what is left
 1. Fine-tune [handwriting-generation models](https://github.com/Grzego/handwriting-generation) done by Grzego on Hungarain data.
 2. Create a pull request
 
@@ -220,7 +221,7 @@ This data is private upon request only for Academic research
 
 `python3 run.py -c 100000 -l hu -w 8 -i texts/split_4.txt --name_format 2 --output_dir "out/v7/" -f 64 --thread_count 8 --font_dir fonts/hu_printed/ -b 3`
 
-- HungarainNmes
+- Hungarian Names
 
 `python3 run.py -c 4478 -l hu -i texts/Hungarain_NAMES.txt --name_format 2 --output_dir "out/hu/Names/" -f 64 --thread_count 8 --font_dir "fonts/hu/"`
 
@@ -249,7 +250,7 @@ This data is private upon request only for Academic research
 `python3 run.py -c 19950  -l en -w 11 -i "texts/Brown/split_4.txt" --name_format 2 --output_dir "/brown_en_v4/images/" -f 64 --thread_count 8 --font_dir fonts/en/ -k 1 -d 2`
 
 ### Acknowledgment: 
-This work has been done using the infrastructure of the ELTE University Researcher, Under the supervision of:
+This work has been done using the infrastructure of the ELTE University Researcher, under the supervision of:
 
 **Gyöngyössy Natabara Máté** , Email: natabara@inf.elte.hu
 
