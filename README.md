@@ -88,7 +88,10 @@ cd HuTrOCR
 pip install -r requirements.txt
 ~~~
 
-<h3> Task: (only one-stage) Model selection experiments could be found in the <a href=""> MODEL_SELECTION.md  </a> file <h3>
+<h3> Task: Visual Model Comparision could be found in the <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/Doc/VISUAL_MODEL_COMPARISON.md"> VISUAL_MODEL_COMPARISON.md  </a> file <h3>
+
+
+<h3> Task: (only one-stage) Model selection experiments could be found in the <a href="https://github.com/Mohammed20201991/OCR_HU_Tra2022/blob/main/Doc/MODEL_SELECTION.md"> MODEL_SELECTION.md  </a> file <h3>
 
 <h3> Task: (only one-stage) <a href="https://github.com/Mohammed20201991/Draft/blob/main/Fine_tune_all_TrOCR.md"> Fine-tuning all TrOCR </a> baseline models on the DH-Lab dataset results could be found at </h3>
 <h3> Task: Two stages (pre-training & Fine-tuning) Word-level results could be found at <a href="https://github.com/Mohammed20201991/Draft/blob/main/WORDS_LEVEL.md"> WORDS_LEVEL.md </a> </h3> 
