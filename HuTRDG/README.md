@@ -266,3 +266,8 @@ This work has been done using the infrastructure of the ELTE University Research
 ## Contact
 Author: Mohammed A.S. Al-Hitawi<br>
 Email: Mohamedabid092@gmail.com, P622VN@inf.elte.hu, al_hitawe@uofallujah.edu.iq
+
+## (APA) Citation 
+```
+Al-Hitawi, M., & Alazaizi, M. A. (2026). Toolkit for Generating and Augmenting Hungarian Handwritten Text Recognition Dataset. Dijlah Journal of Engineering Sciences ISSN: 3078-9664, e-ISSN: 3078-9656, 3(1).‏
+```
