@@ -437,3 +437,8 @@ novel technologies, as intended, are utilized </li>
 - The Official implementation for TrOCR <a href = "https://github.com/microsoft/unilm/tree/master/trocr">this repo</a>
 - The Human dataset I am using is a private dataset provided by the Hungarian Digital Heritage Lab <a href="https://dh-lab.hu/en/kezdolap-english/">(DH-Lab)</a>. Written by Auther(<a href="http://magyar-irodalom.elte.hu/sulinet/igyjo/setup/portrek/arany/arany.htm">János Arany</a>)
 - Tools used: <a href="https://www.python.org/"> Python </a>, <a href="https://huggingface.co/">Huggingface</a>, <a href="https://pytorch.org/">Pytroch </a>, <a href="https://code.visualstudio.com/"> VScode </a> <a href="https://www.tensorflow.org/tensorboard">Tensorbord</a>, and <a href="https://www.linux.org/"> Linux OS </a> <a href="https://ubuntu.com/"> Ubunto distribution  </a>
+
+## Cite (APA)
+```
+Al-Hitawi, M. A., & Gyöngyössy, N. M. (2026). Enhancing Transformer-Based Language Models for Hungarian Handwritten Text Recognition. F1000Research, 15, 181.‏
+```
