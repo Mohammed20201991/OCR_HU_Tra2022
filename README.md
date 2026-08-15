@@ -440,5 +440,6 @@ novel technologies, as intended, are utilized </li>
 
 ## Cite (APA)
 ```
-Al-Hitawi, M. A., & Gyöngyössy, N. M. (2026). Enhancing Transformer-Based Language Models for Hungarian Handwritten Text Recognition. F1000Research, 15, 181.‏
+Al-Hitawi, M. A. S., & Gyöngyössy, N. M. (2026). Enhancing Transformer-Based Language Models for Hungarian Handwritten Text Recognition.
+F1000Research, 15, 181. https://doi.org/10.12688/f1000research.176408.2
 ```
